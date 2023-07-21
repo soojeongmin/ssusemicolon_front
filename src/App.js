@@ -9,12 +9,12 @@ const Wrapper = styled.div`
   background-color: white;
   border: none;
   min-height: calc(var(--vh, 1vh) * 100);
-  max-width: var(--app-max-width, 768px);
+  
   margin-left: auto;
   margin-right: auto;
   position: relative;
 `;
-
+// max-width: var(--app-max-width, 768px);
 const App = () => {
   const setScreenSize = () => {
     // vh 관련
