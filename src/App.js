@@ -18,6 +18,7 @@ const Wrapper = styled.div`
 const App = () => {
   const setScreenSize = () => {
     // vh 관련
+    /*
     const vh = window.innerHeight * 0.01;
     document.documentElement.style.setProperty("--vh", `${vh}px`);
 
@@ -26,11 +27,13 @@ const App = () => {
       window.innerWidth ||
       document.documentElement.clientWidth ||
       document.body.clientWidth;
+      
     const maxWidth = Math.min(768, windowWidth);
     document.documentElement.style.setProperty(
       "--app-max-width",
       `${maxWidth}px`,
     );
+    */
   };
 
   useEffect(() => {
