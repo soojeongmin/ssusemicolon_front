@@ -14,3 +14,4 @@ export const ModalCover = styled.div`
   z-index: 50;
   margin: 0;
 `;
+
