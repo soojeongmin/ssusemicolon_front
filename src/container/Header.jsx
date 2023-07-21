@@ -81,8 +81,6 @@ const HeaderInputButton = styled.button`
   width: 60px;
   height: 40px;
   padding: 0 6px;
-  
-  
 `;
 
 const HeaderEnd = styled.div`
@@ -121,8 +119,8 @@ const Menu = styled.div`
 `;
 
 const MenuButton = styled.button`
-display: box;
-margin-Top: 10px
+  display: box;
+  margin-Top: 10px
 `
 
 const Header = () => {

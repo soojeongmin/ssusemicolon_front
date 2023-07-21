@@ -9,11 +9,12 @@ const Container = styled.div`
 `
 
 export const DetailPage = () => {
-    return <Container><Header>
-    </Header>
-    <MapContainer></MapContainer>
+    return (
+    <Container>
+        <Header/>
+        <MapContainer width={'100vw'} height={'36vh'} marginTop="80px"/>
         <div style ={{ width: 800,height: 424}}>
             <Rechart/>
         </div>
-    </Container>
+    </Container>)
 }
