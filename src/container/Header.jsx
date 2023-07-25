@@ -25,8 +25,8 @@ const HeaderContainer = styled.header`
   position: fixed;
   left: 0;
   top: 0;
-  width: 100%;
-  height: 80px;
+  width: 1920px;
+  height: 125px;
   background-color: #ffffff;
   box-shadow: 0 0 3px #000;
   z-index: 20;

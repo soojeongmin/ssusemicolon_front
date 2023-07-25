@@ -1,76 +1,99 @@
-// import React, { useState, useEffect } from 'react';
-// import axios from 'axios';
-
-// const MapContainer = () => {
-//   const [markers, setMarkers] = useState([]);
-//   const [searchResult, setSearchResult] = useState([]);
-
-//   useEffect(() => {
-//     let container = document.getElementById('map');
-//     let options = {
-//       center: new window.kakao.maps.LatLng(37.586272, 127.029005),
-//       level: 1,
-//     };
-//     let map = new window.kakao.maps.Map(container, options);
-
-//     // 검색어를 서버에 전달하고 검색 결과를 받아오는 함수
-//     const searchPlace = async (query) => {
-//       try {
-//         const response = await axios.get(`/store/search?query=${query}`);
-//         setSearchResult(response.data.data);
-//       } catch (error) {
-//         console.error('Error fetching search result:', error);
-//       }
-//     };
-
-//     // 지도에 검색 결과를 표시하는 함수
-//     const displayMarkers = () => {
-//       markers.forEach((marker) => marker.setMap(null));
-
-//       searchResult.forEach((store) => {
-//         const position = new window.kakao.maps.LatLng(store.latitude, store.longitude);
-//         const marker = new window.kakao.maps.Marker({ position });
-//         marker.setMap(map);
-//         setMarkers((prevMarkers) => [...prevMarkers, marker]);
-//       });
-//     };
-
-//     // 검색어가 변경될 때 마다 검색 함수를 호출하여 결과를 업데이트
-//     const handleSearch = (event) => {
-//       const query = event.target.value;
-//       searchPlace(query);
-//     };
-
-//     // 검색 결과가 업데이트되면 지도에 표시된 마커들을 삭제하고 새로운 검색 결과로 업데이트
-//     displayMarkers();
-
-//     return () => {
-//       markers.forEach((marker) => marker.setMap(null));
-//     };
-//   }, [searchResult]);
-
-//   return <div id="map" style={{ width: '100vw', height: '36vh', marginTop: '80px' }} />;
-// };
-
-// export default MapContainer;
-
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { styled } from "styled-components";
-//import dummyData from './Dummydata'; // dummyData.ts에서 export한 배열을 가져옵니다.
+import Icon from '../component/Icon'
+import axios from 'axios';
+// import dummyData from './Dummydata';
+import MapButton from './MapButton.jsx'
+
+const { kakao } = window;
 
 const MapContainer = (props) => {
   useEffect(() => {
     var markers = [];
-    var infowindow = new window.kakao.maps.InfoWindow({ zIndex: 1 });
-    let container = document.getElementById("map"); //지도를 담을 영역의 DOM 레퍼런스
-    let options = {
-      //지도를 생성할 때 필요한 기본 옵션
-      center: new window.kakao.maps.LatLng(37.586272, 127.029005), //지도의 중심좌표
-      level: 1, //지도의 레벨(확대, 축소 정도)
-    };
-    let map = new window.kakao.maps.Map(container, options); //지도 생성 및 객체 리턴
-    //---> 기본 맵 container, options, map 설정.
+    var dummypositions = [];
+
+    let container = document.getElementById('map'),
+      options = {
+        center: new window.kakao.maps.LatLng(37.586272, 127.029005),
+        level: 1
+      };
+    
+    let map = new kakao.maps.Map(container, options);
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function (position) {
+        var moveLatLon = new kakao.maps.LatLng(position.coords.latitude, position.coords.longitude);
+        map.setCenter(moveLatLon);
+      });
+    } 
+    else {
+      var moveLatLon = new kakao.maps.LatLng(37.586272, 127.029005);
+      map.setCenter(moveLatLon);
+    }
+
+    function displayMarker(latlngPosition, pop) {
+      var imageSrc = '../component/Icon',  // pop level 별 fill color icon 분류
+      imageSize = new kakao.maps.Size(50, 70),
+      imageOption = {offset: new kakao.maps.Point(27, 69)};
+        
+      var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption),
+          markerPosition = latlngPosition;
+          // latlngPosition = new kakao.maps.LatLng(37.54699, 127.09598);
+      
+      var marker = new kakao.maps.Marker({
+          position: markerPosition, 
+          image: markerImage
+      });
+      
+      marker.setMap(map); 
+    }
+
+    function displayMultipleMarkers() {
+      for (var i = 0; i < dummypositions.length; i ++) {
+        displayMarker(dummypositions[i].latlng, dummypositions[i].pop);
+      }
+    }
+
+    function removeMarkers() {
+      for (var i = 0; i < markers.length; i++) {
+        markers[i].setMarkers(null);
+      } 
+    }
+    
+    /* 카카오맵 키워드 검색
+    function placeSearchFromHeader(keyword){
+      var ps = new kakao.maps.services.Places(); 
+      ps.keywordSearch(keyword, placesSearchCB); 
+
+      function placesSearchCB (data, status, pagination) {
+          if (status === kakao.maps.services.Status.OK) {
+              var bounds = new kakao.maps.LatLngBounds();
+              for (var i=0; i<data.length; i++) {
+                  displayMarkerWithText(data[i]);    
+                  bounds.extend(new kakao.maps.LatLng(data[i].y, data[i].x));
+              }       
+              map.setBounds(bounds);
+          } 
+      }
+
+      function displayMarkerWithText(place) {
+          var marker = new kakao.maps.Marker({
+              map: map,
+              position: new kakao.maps.LatLng(place.y, place.x) 
+          });
+
+          kakao.maps.event.addListener(marker, 'click', function() {
+              infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '</div>');
+              infowindow.open(map, marker);
+          });
+      }
+    }
+
+    */
+
+    /*
+    
     // var position = new window.kakao.maps.LatLng(37.586272, 127.029005);
     //  map.setCenter(position);
     // var  markerPosition = new window.kakao.maps.LatLng(37.586272, 127.029005);
@@ -139,11 +162,11 @@ const MapContainer = (props) => {
 
       // 지도 중심좌표를 접속위치로 변경합니다
       map.setCenter(locPosition);
-    }
+    }*/
+
   }, []);
 
-  // props로 넘겨받은 걸 그대로 넘겨주기
-  return <StyledMapContainer id="map" {...props} />;
+  return <StyledMapContainer id="map" {...props}><MapButton/></StyledMapContainer>;
 };
 
 // 넘겨받은 props를 아래와 같이 사용할 수 있습니다.
@@ -168,3 +191,54 @@ MapContainer.defaultProps = {
 };
 
 export default MapContainer;
+
+/*
+
+const MapContainer = () => {
+  const [markers, setMarkers] = useState([]);
+  const [searchResult, setSearchResult] = useState([]);
+
+  useEffect(() => {
+
+    // 검색어를 서버에 전달하고 검색 결과를 받아오는 함수
+    const searchPlace = async (query) => {
+      try {
+        const response = await axios.get(`/store/search?query=${query}`);
+        setSearchResult(response.data.data);
+      } catch (error) {
+        console.error('Error fetching search result:', error);
+      }
+    };
+
+    // 지도에 검색 결과를 표시하는 함수
+    const displayMarkers = () => {
+      markers.forEach((marker) => marker.setMap(null));
+
+      searchResult.forEach((store) => {
+        const position = new window.kakao.maps.LatLng(store.latitude, store.longitude);
+        const marker = new window.kakao.maps.Marker({ position });
+        marker.setMap(map);
+        setMarkers((prevMarkers) => [...prevMarkers, marker]);
+      });
+    };
+
+    // 검색어가 변경될 때 마다 검색 함수를 호출하여 결과를 업데이트
+    const handleSearch = (event) => {
+      const query = event.target.value;
+      searchPlace(query);
+    };
+
+    // 검색 결과가 업데이트되면 지도에 표시된 마커들을 삭제하고 새로운 검색 결과로 업데이트
+    displayMarkers();
+
+    return () => {
+      markers.forEach((marker) => marker.setMap(null));
+    };
+  }, [searchResult]);
+
+  return <div id="map" style={{ width: '100vw', height: '36vh', marginTop: '80px' }} />;
+};
+
+export default MapContainer;
+
+*/
