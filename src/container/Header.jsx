@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import axios from 'axios';
 import Icon from '../component/Icon';
+import { SearchContainer } from './SearchContainer';
 
 const StyledIcon = styled.div`
   svg {
@@ -25,7 +26,7 @@ const HeaderContainer = styled.header`
   position: fixed;
   left: 0;
   top: 0;
-  width: 1920px;
+  width: 1200px;
   height: 125px;
   background-color: #ffffff;
   box-shadow: 0 0 3px #000;
@@ -59,21 +60,6 @@ const HeaderTitle = styled.span`
 
 const HeaderCenter = styled.div`
   width: 50%;
-`;
-
-const HeaderForm = styled.form`
-  display: flex;
-  max-width: 100%;
-`;
-
-const HeaderInputText = styled.input`
-  width: 100%;
-  height: 40px;
-  padding: 0 6px;
-  border: 1px solid #8f8f8f;
-  border-radius:10px;
-  margin-Left: 0%;
-  
 `;
 
 const HeaderInputButton = styled.button`
@@ -223,24 +209,17 @@ const Header = () => {
         </StyledIcon>
         <HeaderCenter>
           {isSearchOpen && (
-            <HeaderForm onSubmit={(e) => e.preventDefault()}>
-              <StyledIcon>
-                <HeaderInputButton onClick={handleSearch}><Icon.Search /></HeaderInputButton>
-              </StyledIcon>
-              <HeaderInputText
-                placeholder="Search..."
-                value={searchKeyword}
-                onChange={(e) => setSearchKeyword(e.target.value)}
-              />
-            </HeaderForm>
+           <SearchContainer/>
           )}
         </HeaderCenter>
         <HeaderEnd>
-          <HeaderSearch></HeaderSearch>
+        <HeaderSearch></HeaderSearch>
           <StyledIcon>
-           
-            <HeaderInputButton><Icon.Dark /></HeaderInputButton>
-            <HeaderInputButton><Icon.Option /></HeaderInputButton>
+          <HeaderInputButton onClick={toggleSearch}>
+            <Icon.Search/>
+            </HeaderInputButton>
+          <HeaderInputButton onClick><Icon.Dark/></HeaderInputButton>
+          <HeaderInputButton onClick><Icon.Option/></HeaderInputButton>
           </StyledIcon>
         </HeaderEnd>
       </HeaderWrapper>
@@ -251,6 +230,7 @@ const Header = () => {
               <MenuInputButton>공지 사항</MenuInputButton>
               <MenuInputButton>신규 장소 등록</MenuInputButton>
               <MenuInputButton>고객 센터</MenuInputButton>
+
               <MenuInputButton onClick={handleSettingsClick}>설정</MenuInputButton>
               {isSubMenuOpen && (
                 <SubMenu>

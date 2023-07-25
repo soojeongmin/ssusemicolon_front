@@ -9,7 +9,7 @@ const Wrapper = styled.div`
   background-color: white;
   border: none;
   min-height: calc(var(--vh, 1vh) * 100);
-  
+
   margin-left: auto;
   margin-right: auto;
   position: relative;
@@ -46,7 +46,7 @@ const App = () => {
     <Wrapper className="App">
       <Routes>
         <Route path="/" element={<DashboardPage />}></Route>
-        <Route path="/detail" element={<DetailPage />}></Route>
+        <Route path="/detail/:storeId" element={<DetailPage />}></Route>
       </Routes>
     </Wrapper>
   );

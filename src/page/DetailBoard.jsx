@@ -1,14 +1,13 @@
-import { styled } from "styled-components"
-import MapContainer from "../container/MapContainer"
+import { styled } from "styled-components";
 import Header from "../container/Header";
+import MapContainer from "../container/MapContainer";
 //import {} from "../component/Icon";
-import Rechart from "../rechart";
+import { useNavigate, useParams } from "react-router-dom";
 import MyCalendar from "../container/Calendar";
-import Picture,{Picture2} from "../container/Picture";
 import Market from "../container/Market";
-import Density from "../container/density";
-import MyChart from"../container/Chart";
+import Picture, { Picture2 } from "../container/Picture";
 import ChartToggle from "../container/ToggleChart";
+import Density from "../container/density";
 
 
 const Container = styled.div`
@@ -17,6 +16,15 @@ const Container = styled.div`
 `
 
 export const DetailPage = () => {
+    const {storeId} = useParams();
+    const navigate = useNavigate();
+    console.log('storeId: ', storeId);
+
+    // 전달받은 가게가 없다면 다시 리스트로 이동시키기!
+    if(!storeId){
+        navigate("/");
+    }
+
     return (
     <Container>
         <Header/>

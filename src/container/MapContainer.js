@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { styled } from "styled-components";
-import Icon from '../component/Icon'
-import axios from 'axios';
+import Icon from "../component/Icon";
+import axios from "axios";
 // import dummyData from './Dummydata';
-import MapButton from './MapButton.jsx'
+import MapButton from "./MapButton.jsx";
 
 const { kakao } = window;
 
@@ -13,44 +13,50 @@ const MapContainer = (props) => {
     var markers = [];
     var dummypositions = [];
 
-    let container = document.getElementById('map'),
+    let container = document.getElementById("map"),
       options = {
         center: new window.kakao.maps.LatLng(37.586272, 127.029005),
-        level: 1
+        level: 1,
       };
-    
+
     let map = new kakao.maps.Map(container, options);
 
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(function (position) {
-        var moveLatLon = new kakao.maps.LatLng(position.coords.latitude, position.coords.longitude);
+        var moveLatLon = new kakao.maps.LatLng(
+          position.coords.latitude,
+          position.coords.longitude,
+        );
         map.setCenter(moveLatLon);
       });
-    } 
-    else {
+    } else {
       var moveLatLon = new kakao.maps.LatLng(37.586272, 127.029005);
       map.setCenter(moveLatLon);
     }
 
     function displayMarker(latlngPosition, pop) {
-      var imageSrc = '../component/Icon',  // pop level 별 fill color icon 분류
-      imageSize = new kakao.maps.Size(50, 70),
-      imageOption = {offset: new kakao.maps.Point(27, 69)};
-        
-      var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption),
-          markerPosition = latlngPosition;
-          // latlngPosition = new kakao.maps.LatLng(37.54699, 127.09598);
-      
+      var imageSrc = "../component/Icon", // pop level 별 fill color icon 분류
+        imageSize = new kakao.maps.Size(50, 70),
+        imageOption = { offset: new kakao.maps.Point(27, 69) };
+
+      var markerImage = new kakao.maps.MarkerImage(
+          imageSrc,
+          imageSize,
+          imageOption,
+        ),
+        markerPosition = latlngPosition;
+      // latlngPosition = new kakao.maps.LatLng(37.54699, 127.09598);
+
       var marker = new kakao.maps.Marker({
-          position: markerPosition, 
-          image: markerImage
+        position: markerPosition,
+        image: markerImage,
       });
-      
-      marker.setMap(map); 
+
+      marker.setMap(map);
     }
 
     function displayMultipleMarkers() {
-      for (var i = 0; i < dummypositions.length; i ++) {
+      for (var i = 0; i < dummypositions.length; i++) {
         displayMarker(dummypositions[i].latlng, dummypositions[i].pop);
       }
     }
@@ -58,9 +64,9 @@ const MapContainer = (props) => {
     function removeMarkers() {
       for (var i = 0; i < markers.length; i++) {
         markers[i].setMarkers(null);
-      } 
+      }
     }
-    
+
     /* 카카오맵 키워드 검색
     function placeSearchFromHeader(keyword){
       var ps = new kakao.maps.services.Places(); 
@@ -163,10 +169,13 @@ const MapContainer = (props) => {
       // 지도 중심좌표를 접속위치로 변경합니다
       map.setCenter(locPosition);
     }*/
-
   }, []);
 
-  return <StyledMapContainer id="map" {...props}><MapButton/></StyledMapContainer>;
+  return (
+    <StyledMapContainer id="map" {...props}>
+      <MapButton />
+    </StyledMapContainer>
+  );
 };
 
 // 넘겨받은 props를 아래와 같이 사용할 수 있습니다.
