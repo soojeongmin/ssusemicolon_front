@@ -35,10 +35,10 @@ const Market = () => {
   useEffect(() => {
     // 서버에서 가게 정보를 받아오는 함수를 가정하고, 데이터를 storeInfo에 저장한다고 가정
     const dataFromServer = {
-      name: '가게 이름',
-      category: '가게 업종',
-      address: '가게 주소',
-      phone: '가게 전화번호',
+      name: '하우스무드 숭실대점',
+      category: '',
+      address: '서울 동작구 삼도로61길 72 B101호',
+      phone: '02-6401-0504',
     };
     setStoreInfo(dataFromServer);
   }, []);
