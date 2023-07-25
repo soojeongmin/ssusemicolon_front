@@ -8,6 +8,9 @@ import { ReactComponent as Increase} from "../asset/svgs/increase.svg"
 import { ReactComponent as Decrease} from "../asset/svgs/decrease.svg"
 import { ReactComponent as Seat} from "../asset/svgs/seat.svg"
 import { ReactComponent as Density} from "../asset/svgs/density.svg"
+import { ReactComponent as Left} from "../asset/svgs/Left.svg"
+import { ReactComponent as Right} from "../asset/svgs/Right.svg"
+import { ReactComponent as Fire} from "../asset/svgs/Fire.svg"
 const Icon ={
     Gps,
     Menu,
@@ -18,6 +21,9 @@ const Icon ={
     Increase,
     Decrease,
     Seat,
-    Density
+    Density,
+    Left,
+    Right,
+    Fire
 };
 export default Icon;

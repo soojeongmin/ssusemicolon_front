@@ -1,16 +1,14 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import axios from 'axios';
 import Icon from '../component/Icon';
 
-
 const StyledIcon = styled.div`
   svg {
-    width: 24px; /* 원하는 크기로 설정하세요 */
-    height: 24px; /* 원하는 크기로 설정하세요 */
+    width: 24px;
+    height: 24px;
     display: flex;
     align-items: center;
-    /* 다른 스타일 속성을 추가로 설정할 수도 있습니다. */
   }
 `;
 
@@ -56,7 +54,7 @@ const HeaderHamburger = styled.button`
 
 const HeaderTitle = styled.span`
   font-size: 1.2rem;
-  padding:0 6px
+  padding: 0 6px;
 `;
 
 const HeaderCenter = styled.div`
@@ -69,18 +67,28 @@ const HeaderForm = styled.form`
 `;
 
 const HeaderInputText = styled.input`
-  width: calc(100% - 60px);
+  width: 100%;
   height: 40px;
   padding: 0 6px;
   border: 1px solid #8f8f8f;
-  border-right: none;
-  border-radius: 2px 0 0 2px;
+  border-radius:10px;
+  margin-Left: 0%;
+  
 `;
 
 const HeaderInputButton = styled.button`
   width: 60px;
   height: 40px;
   padding: 0 6px;
+`;
+
+const MenuInputButton = styled.button`
+  width: 140px;
+  height: 20px;
+  padding: 0 6px;
+  margin-top: 20px;
+  text-align: left;
+  margin-left: 30px;
 `;
 
 const HeaderEnd = styled.div`
@@ -102,7 +110,6 @@ const HeaderProfile = styled.div`
   border-radius: 50%;
   background-color: tomato;
   background-image: none;
-  /* background-size: */
 `;
 
 const Menu = styled.div`
@@ -118,27 +125,77 @@ const Menu = styled.div`
   transition: left 0.3s ease-in-out;
 `;
 
-const MenuButton = styled.button`
-  display: box;
-  margin-Top: 10px
-`
+const MenuButtonContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`;
+
+const MenuButtonWrapper = styled.div`
+  margin-bottom: 30px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+`;
+const slideInAnimation2 = keyframes`
+  from {
+    transform: translateY(-60%);
+  }
+  to {
+    transform: translateY(0);
+  }
+`;
+const SubMenu = styled.div`
+  padding: 10px;
+  background-color: #ffffff;
+  margin-top: 10px;
+  animation: ${slideInAnimation2} 0.3s ease-in-out;
+`;
+const Subbutton = styled.button`
+display:flex;
+flex-direction:column;
+width: 140px;
+height: 20px;
+padding: 0 px;
+margin-top: 20px;
+text-align: left;
+margin-left: 50px;
+color:gray;
+`;
+
+const MenuButton = ({ children }) => {
+  return (
+    <MenuButtonContainer>
+      {React.Children.map(children, (child, index) => (
+        <MenuButtonWrapper key={index}>{child}</MenuButtonWrapper>
+      ))}
+    </MenuButtonContainer>
+  );
+};
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [stores, setStores] = useState([]);
+  const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
 
   const toggleSearch = () => {
-    setIsSearchOpen(!isSearchOpen); // 검색창의 상태를 토글합니다.
+    setIsSearchOpen(!isSearchOpen);
   };
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
-
+  const toggleSubMenu = () => {
+    setIsSubMenuOpen(!isSubMenuOpen);
+  }
+  const handleSettingsClick = (e) => {
+    e.stopPropagation(); // 이벤트 버블링 방지
+    toggleSubMenu();
+  };
   const handleSearch = () => {
-    // 검색 버튼을 누르면 서버로 검색어를 전송하고, 매장 정보를 받아옵니다.
     axios
       .get(`/store/search?query=${searchKeyword}`)
       .then((response) => {
@@ -156,47 +213,53 @@ const Header = () => {
     // displayMarkersOnMap(stores);
     // (displayMarkersOnMap 함수는 MapContainer에서 정의하여 지도에 마커를 표시하는 역할을 수행)
   }, [stores]);
+
   return (
     <HeaderContainer>
       <HeaderWrapper>
-          <StyledIcon>
-          <HeaderHamburger onClick={toggleMenu}><Icon.Menu/></HeaderHamburger>
-          
+        <StyledIcon>
+          <HeaderHamburger onClick={toggleMenu}><Icon.Menu /></HeaderHamburger>
           <HeaderTitle>로고</HeaderTitle>
-          </StyledIcon>
+        </StyledIcon>
         <HeaderCenter>
-        {isSearchOpen &&(
-          <HeaderForm onSubmit={(e) => e.preventDefault()}>
-           <StyledIcon>
-          <HeaderInputButton onClick={handleSearch}><Icon.Search/></HeaderInputButton>
-          </StyledIcon> 
-            <HeaderInputText
-              placeholder="장소 검색"
-              value={searchKeyword}
-              onChange={(e) => setSearchKeyword(e.target.value)}
-            />
-            
-            
-          </HeaderForm>
-        )}
+          {isSearchOpen && (
+            <HeaderForm onSubmit={(e) => e.preventDefault()}>
+              <StyledIcon>
+                <HeaderInputButton onClick={handleSearch}><Icon.Search /></HeaderInputButton>
+              </StyledIcon>
+              <HeaderInputText
+                placeholder="Search..."
+                value={searchKeyword}
+                onChange={(e) => setSearchKeyword(e.target.value)}
+              />
+            </HeaderForm>
+          )}
         </HeaderCenter>
         <HeaderEnd>
           <HeaderSearch></HeaderSearch>
           <StyledIcon>
-          <HeaderInputButton onClick={toggleSearch}><Icon.Search/></HeaderInputButton>
-          <HeaderInputButton onClick><Icon.Dark/></HeaderInputButton>
-          <HeaderInputButton onClick><Icon.Option/></HeaderInputButton>
+           
+            <HeaderInputButton><Icon.Dark /></HeaderInputButton>
+            <HeaderInputButton><Icon.Option /></HeaderInputButton>
           </StyledIcon>
-          
         </HeaderEnd>
       </HeaderWrapper>
       <div className="menu-container">
-        {isMenuOpen && (
+      {isMenuOpen && (
           <Menu isOpen={isMenuOpen} onClick={toggleMenu}>
             <MenuButton>
-            <HeaderInputButton>메뉴 항목 1</HeaderInputButton>
-            <HeaderInputButton>메뉴 항목 2</HeaderInputButton>
-            <HeaderInputButton>메뉴 항목 3</HeaderInputButton>
+              <MenuInputButton>공지 사항</MenuInputButton>
+              <MenuInputButton>신규 장소 등록</MenuInputButton>
+              <MenuInputButton>고객 센터</MenuInputButton>
+              <MenuInputButton onClick={handleSettingsClick}>설정</MenuInputButton>
+              {isSubMenuOpen && (
+                <SubMenu>
+                  <Subbutton>장소 수정</Subbutton>
+                  <Subbutton>매장 삭제 신청</Subbutton>
+                  <Subbutton>검색 기록 삭제</Subbutton>
+                  </SubMenu>
+              )}
+              <MenuInputButton>버전 정보 v0.0.0</MenuInputButton>
             </MenuButton>
           </Menu>
         )}
