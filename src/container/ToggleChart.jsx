@@ -55,8 +55,6 @@ const ChartToggle = () => {
       <SwitchWrapper>
       
         {showMyChart ? <MyChart /> : <Rechart />}
-       
-        
         <SwitchButtonLeft onClick={toggleToMyChart}><Icon.Left /></SwitchButtonLeft>
         <SwitchButtonRight onClick={toggleToRechart}><Icon.Right /></SwitchButtonRight>
       </SwitchWrapper>

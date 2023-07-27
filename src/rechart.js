@@ -1,6 +1,7 @@
-/*
-
+import { useEffect } from "react";
+import MyCalendar from "./container/Calendar";
 import React, { PureComponent } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import {
     LineChart,
     Line,
@@ -56,12 +57,22 @@ const data = [
         amt: 2100,
     },
 ];
+const date = new Date();
+<MyCalendar value = {date}/>
+const logEvery3Seconds = () => {
+    setInterval(() => {
+      console.log(date);
+    }, 3000); // 3000ms(3초) 간격으로 실행
+  };
+  
+
 
 export default class Example extends PureComponent {
     static demoUrl = "https://codesandboxt.io/s/simple-line-chart-kec3v";
-
+    logEvery3Seconds;
     render() {
         return (
+            
             <ResponsiveContainer width="100%" height="100%">
                 <LineChart
                     width={500}
@@ -85,11 +96,10 @@ export default class Example extends PureComponent {
                         stroke="#8884d8"
                         activeDot={{ r: 8 }}
                     />
-                    {/* <Line type="monotone" dataKey="uv" stroke="#82ca9d" />}
+                    {/* {/* <Line type="monotone" dataKey="uv" stroke="#82ca9d" />} */}
                 </LineChart>
             </ResponsiveContainer>
         );
     }
 }
 
-*/

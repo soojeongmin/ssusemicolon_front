@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { useDetailboardQuery } from "../utils/hooks/useDetailboard";
+import { useNavigate, useParams } from "react-router-dom";
 
 const Container = styled.div`
   margin: 20px;
@@ -25,34 +27,51 @@ const Info = styled.p`
 `;
 
 const Market = () => {
-  const [storeInfo, setStoreInfo] = useState({
-    name: '',
-    category: '',
-    address: '',
-    phone: '',
-  });
+  const {storeId} = useParams();
+  const {isLoading, data: searchResult, isError} = useDetailboardQuery();
+  const [storeInfo, setStoreInfo] = useState({});
 
+
+  
+  
   useEffect(() => {
-    // 서버에서 가게 정보를 받아오는 함수를 가정하고, 데이터를 storeInfo에 저장한다고 가정
-    const dataFromServer = {
-      name: '하우스무드 숭실대점',
-      category: '',
-      address: '서울 동작구 삼도로61길 72 B101호',
-      phone: '02-6401-0504',
-    };
-    setStoreInfo(dataFromServer);
+    if(searchResult){// 서버에서 가게 정보를 받아오는 함수를 가정하고, 데이터를 storeInfo에 저장한다고 가정
+    setStoreInfo(searchResult);}
   }, []);
-
+  if (!searchResult) {
+    return null; // 또는 로딩 화면 또는 오류 처리 등을 할 수 있음
+  }
+  const businessDays = searchResult?.businessDays || null;
   return (
     <Container>
-      <Title>{storeInfo.name}</Title>
-      <type>{storeInfo.Category}</type>
+      <Title>{storeInfo.storeName}</Title>
+      {/* <type>{storeInfo.Category}</type> */}
       <Subtitle></Subtitle>
       <Info>{storeInfo.address}</Info>
       <Subtitle></Subtitle>
-      <Info>{storeInfo.phone}</Info>
+  <Info>{WorkDay(storeInfo.businessDays)} 운영</Info>
+  <Subtitle></Subtitle>
+  <Info>영업시간 {storeInfo.openBusinessHour}시~{storeInfo.closeBusinessHour}시</Info>
     </Container>
   );
 };
+
+function WorkDay(businessDays) {
+  let Week = ['일', '월', '화' , '수' , '목' , '금', '토'];
+  let work = '';
+  if(!businessDays){ return null;}
+  for(let i =0;i<businessDays.length;i++){
+    
+    if(businessDays[i] === 'OPEN' && i !== businessDays.length-1)
+    {   work+=Week[i]+',';}
+    else if(businessDays[i]==='CLOSED')
+    {  continue;}
+    else
+      {work+=Week[i];}
+
+    
+  }
+  return work;
+}
 
 export default Market;
