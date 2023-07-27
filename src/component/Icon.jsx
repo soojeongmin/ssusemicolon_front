@@ -11,6 +11,7 @@ import { ReactComponent as Density} from "../asset/svgs/density.svg"
 import { ReactComponent as Left} from "../asset/svgs/Left.svg"
 import { ReactComponent as Right} from "../asset/svgs/Right.svg"
 import { ReactComponent as Fire} from "../asset/svgs/Fire.svg"
+import { ReactComponent as Marker} from "../asset/svgs/Marker.svg"
 const Icon ={
     Gps,
     Menu,
@@ -24,6 +25,7 @@ const Icon ={
     Density,
     Left,
     Right,
-    Fire
+    Fire,
+    Marker
 };
 export default Icon;

@@ -11,15 +11,24 @@ const Container = styled.div`
     position: relative;
 `
 
-const Box = styled.div`
-    position: absolute;
-    z-index: 2;
-    overflow-y: scroll;
+const StyledIcon = styled.div`
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+`
 
-    left: 24px;
-    top: 145px;
-    width: 500px;
-    height: 1115px;
+const Box = styled.div`
+    position: fixed;
+    display: flex;
+    overflow-y: auto;
+    z-index: 20;
+
+    left: 20px;
+    top: 100px;
+    width: 350px;
+    height: 820px;
+
     background-color: #FFFFFF;
 
     border-radius: 20px;
@@ -29,64 +38,60 @@ const Box = styled.div`
     
     box-shadow : 0px 0px 30px 0px rgb(0, 0, 0, 0.25);
 
-    flex-direction: column;
     flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-`;
-
-const Title = styled.div`
-    font-size: 25px;
-    font-weight: bold;
-    margin: 30px 0 0 0;
-`
-
-const List = styled.div`
-    margin: 10px 0 3px 0;
-    font-size: 23px;
-    font-weight: bold;
-`
-
-const StyledIcon = styled.div`
-  svg {
-    width: 23px;
-    height: 23px;
-  }
-`
-
-const Side = styled.div`
-    margin: 0 auto;
-    width: 440px;
-    cursor: pointer;
-`
-
-const Small = styled.div`
-    height: 290px;
-    margin: 0 0 26px 0;
 `
 
 const TitleSpace = styled.div`
     height: 50px;
 `
 
-const Divide = styled.div`
-    width: 100%;
-    height: 30px;
+const LeftWhiteSpace = styled.div`
+    margin: 0 10px;
+    cursor: pointer;
+`
+
+const MarketList = styled.div`
+    height: 250px;
+    margin: 0 0 26px 0;
+`
+
+const Title = styled.h1`
+    font-size: 24px;
+    font-weight: bold;
+    margin: 25px 0;
+`
+
+const StoreTitle = styled.h2`
+    margin: 10px 0 5px 0;
+    font-size: 20px;
+    font-weight: bold;
+`
+
+const PopGroup = styled.div`
+    width: 300px;
     display: flex;
     flex-direction: row;
 `
 
-const IconBox = styled.div`
-    width: 150px;
-    height: 100%;
+const PopDen = styled.div`
+    width: 65px;
+`
+
+const PopDenText = styled.h4`
+    width: 100%;
+    padding: 2px 0 0 0;
+    font-size: 14px;
 `
 
 const StyledImage = styled.div`
-    width:440px; 
-    height:220px;
+    width:330px; 
+    height:200px;
     display: block; 
-    background-color: #e0e0e0;
     background-image: url(${props => props.thumurl});
+    background-color: #EBEBEB;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
 `
 
 const Image = ({thumUrl}) => {
@@ -113,32 +118,37 @@ export const DashboardPage = () => {
         navigate(`/detail/${storeId}`);
     }
 
+    const calculatePop = (density) => {
+        if(density>=75) return '매우 혼잡';
+        else if(density<75 && density >= 50) return '혼잡';
+        else if(density<50 && density >= 25) return '보통';
+        else return '원활';
+    }
+
     const StoresComponent = () => {
-        const ret =  stores.map(({storeId, storeName, thumUrl, address, seatCount}) => {
-            return <Side key={storeId} onClick={() => handleOnClickStore(storeId)}>
-            <Small>
+        const ret =  stores.map(({storeId, storeName, thumUrl, density}) => {
+            return <LeftWhiteSpace key={storeId} onClick={() => handleOnClickStore(storeId)}>
+            <MarketList>
                 <Image thumUrl={thumUrl}/>
-                <List>{storeName}</List>
-                <Divide>
-                    <IconBox>
-                        <Icon.Pop/> 매우 혼잡
-                    </IconBox>
-                    <IconBox>
-                        <Icon.Density/> 밀집도 90%
-                    </IconBox>
-                </Divide>
-            </Small>
-        </Side>
+                <StoreTitle>{storeName}</StoreTitle>
+                <PopGroup>
+                    <PopDen><Icon.Pop/></PopDen>
+                    <PopDenText>{calculatePop(density)}</PopDenText>
+                    <PopDen><Icon.Density/></PopDen>
+                    <PopDenText>밀집도 {density}%</PopDenText>
+                </PopGroup>
+            </MarketList>
+        </LeftWhiteSpace>
         })
 
         const NoDataText = () => {
-            return (<Side>
-                <Small>
+            return (<LeftWhiteSpace>
+                <MarketList>
                     <span>
                     검색결과가 없어요.
                     </span>
-                </Small>
-            </Side>)
+                </MarketList>
+            </LeftWhiteSpace>)
         }
 
         return ret.length > 0 ? ret : <NoDataText/>;
@@ -146,20 +156,18 @@ export const DashboardPage = () => {
 
     return <Container>
         <Header/>
-        <MapContainer width={'1920px'} height={'1280px'} marginTop="0"/>
-        
         <Box>
             <StyledIcon>
-                <Side>
+                <LeftWhiteSpace>
                     <TitleSpace>
                         <Title>
                             {searchKeyword ? `"${searchKeyword}" 검색결과`:"내 근처에 위치한 가게"}
                         </Title>
                     </TitleSpace>
-                </Side>
+                </LeftWhiteSpace>
                <StoresComponent/>
             </StyledIcon>
         </Box>
-
+        <MapContainer/>
     </Container>
 }
