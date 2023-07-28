@@ -1,148 +1,78 @@
-import { ResponsiveLine } from '@nivo/line';
+import React, { PureComponent } from 'react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-const MyChart = (data2) => {
-  // 차트 데이터
-  const data = [
-    {
-      id: '밀집도',
-      data: [
-            {
-              x: '0시',
-              y: 0.5
-            },
-            {
-              x: '1시',
-              y: 0.6
-            },
-            {
-              x: '2시',
-              y: 0.8
-            },
-            {
-              x: '3시',
-              y: 0.7
-            },
-            {
-              x: '4시',
-              y: 0.8
-            },
-            {
-              x: '5시',
-              y: 0.5
-            },
-            {
-              x: '6시',
-              y: 0.2
-            },
-            {
-              x: '7시',
-              y: 0.3
-            },
-            {
-              x: '8시',
-              y: 0.4
-            },
-            {
-              x: '9시',
-              y: 0.5
-            },
-            {
-              x: '10시',
-              y: 0.5
-            },
-            {
-              x: '11시',
-              y: 0.1
-            },
-            {
-              x: '12시',
-              y: -0.2
-            },
-            {
-              x: '13시',
-              y: -0.6
-            },
-            {
-              x: '14시',
-              y: -0.1
-            },
-            {
-              x: '15시',
-              y: 0
-            },
-            {
-              x: '16시',
-              y: 0.1
-            },
-            {
-              x: '17시',
-              y: -0.1
-            },
-            {
-              x: '18시',
-              y: -0.4
-            },
-            {
-              x: '19시',
-              y: -0.6
-            },
-            {
-              x: '20시',
-              y: -0.5
-            },
-            {
-              x: '21시',
-              y: 0.2
-            },
-            {
-              x: '22시',
-              y: 0.5
-            },
-            {
-              x: '23시',
-              y: 0.6
-            },
-            
-        ]
-    },
-   
-  ];
+const data = [
+  {
+    name: 'Page A',
+    uv: 4000,
+    pv: 2400,
+    amt: 2400,
+  },
+  {
+    name: 'Page B',
+    uv: 3000,
+    pv: 1398,
+    amt: 2210,
+  },
+  {
+    name: 'Page C',
+    uv: 2000,
+    pv: 9800,
+    amt: 2290,
+  },
+  {
+    name: 'Page D',
+    uv: 2780,
+    pv: 3908,
+    amt: 2000,
+  },
+  {
+    name: 'Page E',
+    uv: 1890,
+    pv: 4800,
+    amt: 2181,
+  },
+  {
+    name: 'Page F',
+    uv: 2390,
+    pv: 3800,
+    amt: 2500,
+  },
+  {
+    name: 'Page G',
+    uv: 3490,
+    pv: 4300,
+    amt: 2100,
+  },
+];
 
-  return (
-    <ResponsiveLine
-    
-      data={data2}
-      enableSlices="x"
-      height={400}
-      margin={{
-        bottom: 60,
-        left: 80,
-        right: 20,
-        top: 20,
-      }}
-    //   markers={[
-    //     {
-    //       axis: 'y',
-    //       legend: 'y marker at 0',
-    //       legendPosition: 'bottom-left',
-    //       lineStyle: {
-    //         stroke: '#b0413e',
-    //         strokeWidth: 1,
-    //       },
-    //       value: 0,
-    //     },
-    //   ]}
-      pointBorderColor="#fff"
-      pointBorderWidth={2}
-      pointSize={8}
-      width={900}
-      yScale={{
-        max: 1,
-        min: -1,
-        type: 'linear',
-      }}
-    />
-  );
-};
-
-export default MyChart;
+export default class Example extends PureComponent {
+  static demoUrl = 'https://codesandbox.io/s/simple-line-chart-kec3v';
+  
+  render() {
+    const {newdata} = this.props;
+    return (
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart
+          width={600}
+          height={300}
+          data={newdata}
+          margin={{
+            top: 5,
+            right: 30,
+            left: 20,
+            bottom: 5,
+          }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="이름" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Line type="monotone" dataKey="밀집도" stroke="#8884d8" activeDot={{ r: 8 }} />
+         
+        </LineChart>
+      </ResponsiveContainer>
+    );
+  }
+}

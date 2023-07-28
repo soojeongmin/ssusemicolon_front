@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css'; // css import
 import styled from 'styled-components';
@@ -46,12 +46,20 @@ const CalendarWrapper = styled.div`
   z-index:3
 `;
 
-const MyCalendar = () => {
-  const [value, onChange] = useState(new Date());
+const MyCalendar = ({onChange2}) => {
+  const [value, onChange] = useState(() => {
+    const savedData = localStorage.getItem('selectedData');
+    return savedData ? new Date(savedData) : new Date(); //페이지가 처음 로드될 때, localStorage에 있는 사진이 있으면 불러온다.
+  });
   const [showCalendar, setShowCalendar] = useState(false);
-
+  useEffect(() => { localStorage.setItem('selectedDate',value.toISOString());},[value]);
   const toggleCalendar = () => {
     setShowCalendar((prevShowCalendar) => !prevShowCalendar);
+  };
+
+  const handleDateChange = (date) => {
+    onChange2(date); // 선택된 날짜를 onChange2 프로퍼티로 전달
+    onChange(date); // MyCalendar 컴포넌트의 상태 업데이트
   };
 
   const formatDateWithWeekday = (date) => {
@@ -61,7 +69,7 @@ const MyCalendar = () => {
 
   const prevLabel = ({ date }) => {
     const formattedDate = formatDateWithWeekday(date);
-    return formattedDate.replace(/일요일|일/g, ''); // 일요일과 일 글자를 모두 제거
+    return formattedDate; // 일요일과 일 글자를 모두 제거
   };
 
   return (
@@ -72,7 +80,7 @@ const MyCalendar = () => {
           <ToggleButton onClick={toggleCalendar}>날짜 변경</ToggleButton>
           {showCalendar && (
             <CalendarWrapper>
-              <Calendar onChange={onChange} value={value} prevLabel={prevLabel} />
+              <Calendar onChange={handleDateChange} value={value} prevLabel={prevLabel} />
             </CalendarWrapper>
           )}
         </ButtonWrapper>

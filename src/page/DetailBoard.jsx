@@ -79,7 +79,7 @@ export const DetailPage = () => {
     const { storeId } = useParams(); //여기서 아이디를 안전하게 만든다.
     const navigate = useNavigate();
     console.log('storeId: ', storeId);
-    const [selectedDate, setSelectedDate] = useState(new Date("2023-07-23"));
+    const [selectedDate, setSelectedDate] = useState(new Date());
 
   const handleDateChange = (date) => {
     setSelectedDate(date); }// 선택된 날짜를 상태로 관리합니다.
@@ -159,108 +159,111 @@ export const DetailPage = () => {
           console.log(DayDensity)
           const newdata2 = [
             {
-              x: '0시',
-              y: 0.5
+              name: '0시',
+              밀집도: 0.5
             },
             {
-              x: '1시',
-              y: 0.6
+              name: '1시',
+              밀집도: 0.6
             },
             {
-              x: '2시',
-              y: 0.8
+              name: '2시',
+              밀집도: 0.8
             },
             {
-              x: '3시',
-              y: 0.7
+              name: '3시',
+              밀집도: 0.7
             },
             {
-              x: '4시',
-              y: 0.8
+              name: '4시',
+              밀집도: 0.8
             },
             {
-              x: '5시',
-              y: 0.5
+              name: '5시',
+              밀집도: 0.5
             },
             {
-              x: '6시',
-              y: 0.2
+              name: '6시',
+              밀집도: 0.2
             },
             {
-              x: '7시',
-              y: 0.3
+              name: '7시',
+              밀집도: 0.3
             },
             {
-              x: '8시',
-              y: 0.4
+              name: '8시',
+              밀집도: 0.4
             },
             {
-              x: '9시',
-              y: 0.5
+              name: '9시',
+              밀집도: 0.5
             },
             {
-              x: '10시',
-              y: 0.5
+              name: '10시',
+              밀집도: 0.5
             },
             {
-              x: '11시',
-              y: 0.1
+              name: '11시',
+              밀집도: 0.1
             },
             {
-              x: '12시',
-              y: -0.2
+              name: '12시',
+              밀집도: -0.2
             },
             {
-              x: '13시',
-              y: -0.6
+              name: '13시',
+              밀집도: -0.6
             },
             {
-              x: '14시',
-              y: -0.1
+              name: '14시',
+              밀집도: -0.1
             },
             {
-              x: '15시',
-              y: 0
+              name: '15시',
+              밀집도: 0
             },
             {
-              x: '16시',
-              y: 0.1
+              name: '16시',
+              밀집도: 0.1
             },
             {
-              x: '17시',
-              y: -0.1
+              name: '17시',
+              밀집도: -0.1
             },
             {
-              x: '18시',
-              y: -0.4
+              name: '18시',
+              밀집도: -0.4
             },
             {
-              x: '19시',
-              y: -0.6
+              name: '19시',
+              밀집도: -0.6
             },
             {
-              x: '20시',
-              y: -0.5
+              name: '20시',
+              밀집도: -0.5
             },
             {
-              x: '21시',
-              y: 0.2
+              name: '21시',
+              밀집도: 0.2
             },
             {
-              x: '22시',
-              y: 0.5
+              name: '22시',
+              밀집도: 0.5
             },
             {
-              x: '23시',
-              y: 0.6
+              name: '23시',
+              밀집도: 0.6
             },   
         ]
         const NewData = newdata2.map((datapoint,index) => {
-            if(index<data3.openBusinessHour || index>data3.closeBusinessHour)
-                return datapoint;
-            return {...datapoint,y:DayDensity[index]};
+            if(index>=data3.openBusinessHour && index<data3.closeBusinessHour)
+                return {...datapoint,밀집도:DayDensity[index-data3.openBusinessHour]};
+            return {...datapoint,밀집도:0};
         });
-   
+        // for(let i =0 ;i<24;i++){
+        //   if(index>=data3.openBusinessHour && index<data3.closeBusinessHour)
+        // }
+   console.log(NewData)
       // YYYY-MM-DD 형식으로 날짜를 변환하는 함수
  
 
@@ -279,8 +282,8 @@ export const DetailPage = () => {
         <Picture2 density={density}/> {/*밀집도에 따라서 달라지는 값이 있어서*/}
         <Market data={data} />
         <Density storeInfo={data}/>
-        <MyCalendar  onChange={handleDateChange}/>
-        <ChartToggle data = {newdata} data2 = {NewData}/>
+        <MyCalendar  onChange2={handleDateChange}/>
+        <ChartToggle data = {newdata} newdata = {NewData}/>
         
     </Container>)
 }
