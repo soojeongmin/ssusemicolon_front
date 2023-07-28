@@ -12,6 +12,7 @@ import { ReactComponent as Left} from "../asset/svgs/Left.svg"
 import { ReactComponent as Right} from "../asset/svgs/Right.svg"
 import { ReactComponent as Fire} from "../asset/svgs/Fire.svg"
 import { ReactComponent as Marker} from "../asset/svgs/Marker.svg"
+import { ReactComponent as Refresh} from "../asset/svgs/Refresh.svg"
 const Icon ={
     Gps,
     Menu,
@@ -26,6 +27,7 @@ const Icon ={
     Left,
     Right,
     Fire,
-    Marker
+    Marker,
+    Refresh
 };
 export default Icon;
