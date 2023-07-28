@@ -9,7 +9,7 @@ const MapBtnContainer = styled.div`
     left: 94%;
     top: 100px;
     width: 70px;
-    height: 200px;
+    height: 250px;
 
     z-index: 20;
 `
@@ -66,12 +66,16 @@ const MapBtnInputButton = styled.button`
 `;
 
 const MapButton = (props) => {
-    const {zoomIn, zoomOut, updateCurrentPos} = props;
+    const {zoomIn, zoomOut, refreshLocation, updateCurrentPos} = props;
     
     return <MapBtnContainer>
         <StyledIcon>
             <SingleButtonGroup>
                 <MapBtnInputButton onClick={updateCurrentPos}><Icon.Gps width="24px" height="24px"/></MapBtnInputButton>
+            </SingleButtonGroup>
+            <Space/>
+            <SingleButtonGroup>
+                <MapBtnInputButton onClick={refreshLocation}><Icon.Refresh width="22px" height="20px"/></MapBtnInputButton>
             </SingleButtonGroup>
             <Space/>
             <DoubleButtonGroup>
@@ -86,18 +90,19 @@ const MapButton = (props) => {
     </MapBtnContainer>
 }
 
-// 넘겨받을 props의 타입을 아래와 같이 지정할 수 있습니다.
+
 MapButton.propTypes = {
     zoomIn: PropTypes.func,
     zoomOut: PropTypes.func,
+    refreshLocation: PropTypes.func,
     updateCurrentPos: PropTypes.func,
-  };
+};
   
-  // 넘겨받을 props의 기본값을 지정할 수 있습니다.
-  MapButton.defaultProps = {
-      zoomIn: () => {},
-      zoomOut: () => {},
-      updateCurrentPos: () => {},
-  };
+MapButton.defaultProps = {
+    zoomIn: () => {},
+    zoomOut: () => {},
+    refreshLocation: () => {},
+    updateCurrentPos: () => {},
+};
 
 export default MapButton;

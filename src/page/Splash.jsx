@@ -1,5 +1,6 @@
 import { styled } from "styled-components";
 import Header from "../container/Header";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
     position: relative;
@@ -76,6 +77,12 @@ const ButtonText = styled.div`
 `
 
 export const SplashPage = () => {
+    const navigate = useNavigate();
+    
+    const clickBtnDashboard = () => {
+        navigate(`/`);
+    }
+
     return <Container>
         <Header/>
         <SplashBox>
@@ -86,7 +93,7 @@ export const SplashPage = () => {
         </TextBox>
         <ImageBox>
             <backgroundImg/>
-            <SplashButton href="">
+            <SplashButton onClick={clickBtnDashboard}>
                 <ButtonText>서비스 바로가기</ButtonText>
             </SplashButton>
         </ImageBox>
