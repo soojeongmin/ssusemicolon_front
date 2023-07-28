@@ -13,6 +13,7 @@ import {
   ModifyResult,
   RegisterResult,
 } from "./page/Admin/ResultPage";
+import Test from "./container/Test";
 
 const Wrapper = styled.div`
   background-color: white;
@@ -68,6 +69,7 @@ const App = () => {
 
         <Route path="/admin/delete" element={<DeletePage />}></Route>
         <Route path="/admin/delete/result" element={<DeleteResult />}></Route>
+        <Route path="/test" element={<Test />}></Route>
       </Routes>
     </Wrapper>
   );

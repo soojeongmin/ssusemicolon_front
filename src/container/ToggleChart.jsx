@@ -1,46 +1,28 @@
-import React, { useState } from 'react';
-import MyChart from './Chart';
-import Rechart from '../rechart';
-import Icon from "../component/Icon"
-import styled from 'styled-components';
+import React, { useState } from "react";
+import styled from "styled-components";
+import Icon from "../component/Icon";
+import { WeeklyChart } from "./Chart";
+import { DateChart } from "./Rechart";
 
 const SwitchWrapper = styled.div`
-  position: relative;
   width: 800px;
   height: 424px;
   margin: 0 auto;
+  display: flex;
 `;
 
-const SwitchButtonLeft = styled.button`
-  position: absolute;
-  top: 50%;
-  left: -20%;
-  transform: translateY(-50%);
-  background-color: transparent;
+const SwitchButtonWrapper = styled.button`
   border: none;
   font-size: 1.5rem;
 `;
 
-const SwitchButtonRight = styled.button`
-  position: absolute;
-  top: 50%;
-  right: -20%;
-  transform: translateY(-50%);
-  background-color: transparent;
-  border: none;
-  font-size: 1.5rem;
-`;
-const TitleWrapper = styled.div`
-  display:flex;
-  justify-content: center;
-  margin-bottom: 16px;`;
-
-const GraphTitle = styled.h2`
-  font-size:20px;
-  font-weight:bold;`
-
-const ChartToggle = ({data,newdata}) => {
+const ChartToggle = ({ storeId }) => {
   const [showMyChart, setShowMyChart] = useState(true); // 처음에는 MyChart를 보여줍니다.
+  const [date, setSelectedDate] = useState(new Date());
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+  };
 
   const toggleToMyChart = () => {
     setShowMyChart(true); // MyChart 보기
@@ -53,11 +35,23 @@ const ChartToggle = ({data,newdata}) => {
   return (
     <div>
       <SwitchWrapper>
-      
-        {showMyChart ? <MyChart newdata = {newdata} /> : <Rechart data = {data}/>}
-        
-        <SwitchButtonLeft onClick={toggleToMyChart}><Icon.Left /></SwitchButtonLeft>
-        <SwitchButtonRight onClick={toggleToRechart}><Icon.Right /></SwitchButtonRight>
+        <SwitchButtonWrapper onClick={toggleToMyChart}>
+          <Icon.Left />
+        </SwitchButtonWrapper>
+
+        {showMyChart ? (
+          <WeeklyChart storeId={storeId} />
+        ) : (
+          <DateChart
+            storeId={storeId}
+            date={date}
+            handleDateChange={handleDateChange}
+          />
+        )}
+
+        <SwitchButtonWrapper onClick={toggleToRechart}>
+          <Icon.Right />
+        </SwitchButtonWrapper>
       </SwitchWrapper>
     </div>
   );

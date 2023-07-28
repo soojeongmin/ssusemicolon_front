@@ -1,45 +1,27 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchChartApi,fetchChart2Api } from "../apis/chart";
+import { fetchDateChartApi, fetchWeeklyChartApi } from "../apis/chart";
 
 export const chartKeys = {
-    all: ["store"],
-    list: () => [...chartKeys.all, "list"],
-    search: (q) => [
-      ...chartKeys.all,
-      ...chartKeys.list(),
-      "picture",
-      { q },
-    ],
-    detail: (storeId) => [...chartKeys.all, "chart", storeId],
-  };
-  
-  // Get 홈화면 - 데이터 가져오기
-  export const useChart = (storeId) => {
-    console.log("storeId: ", storeId);
-    // 이런식으로 키와, api 호출에 전달
-    return useQuery(chartKeys.detail(storeId), () => //하하.
-      fetchChartApi(storeId),
-    );
-  };
- 
- 
-  export const chart2Keys = {
-    all: ["store"],
-    list: () => [...chart2Keys.all, "list"],
-    search: (q) => [
-      ...chart2Keys.all,
-      ...chart2Keys.list(),
-      "picture",
-      { q },
-    ],
-    detail2: (storeId, date) => [...chart2Keys.all, "chart2", storeId,date],
-  };
-  
-  // Get 홈화면 - 데이터 가져오기
-  export const useChart2 = (storeId,date) => {
-    console.log("storeId: ", storeId);
-    // 이런식으로 키와, api 호출에 전달
-    return useQuery(chart2Keys.detail2(storeId,date), () => //하하. 한개만 있어도 됨?
-      fetchChart2Api(storeId,date),
-    );
-  };
+  all: ["store"],
+  weeklyChart: (storeId) => [...chartKeys.all, "chart", "weekly", storeId],
+  dateChart: (storeId, date) => [
+    ...chartKeys.all,
+    "chart",
+    "weekly",
+    storeId,
+    date,
+  ],
+};
+
+export const useWeeklyChart = (storeId) => {
+  return useQuery(chartKeys.weeklyChart(storeId), () =>
+    fetchWeeklyChartApi(storeId),
+  );
+};
+
+export const useDateChart = (storeId, date) => {
+  // 이런식으로 키와, api 호출에 전달
+  return useQuery(chartKeys.dateChart(storeId, date), () =>
+    fetchDateChartApi(storeId, date),
+  );
+};

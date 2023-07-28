@@ -1,8 +1,7 @@
-import React, { useState,useEffect } from 'react';
-import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css'; // css import
-import styled from 'styled-components';
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useState } from "react";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css"; // css import
+import styled from "styled-components";
 const Container = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -43,28 +42,24 @@ const CalendarWrapper = styled.div`
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 16px;
-  z-index:3
+  z-index: 3;
 `;
 
-const MyCalendar = ({onChange2}) => {
-  const [value, onChange] = useState(() => {
-    const savedData = localStorage.getItem('selectedData');
-    return savedData ? new Date(savedData) : new Date(); //페이지가 처음 로드될 때, localStorage에 있는 사진이 있으면 불러온다.
-  });
+export const MyCalendar = ({ onChange, date }) => {
   const [showCalendar, setShowCalendar] = useState(false);
-  useEffect(() => { localStorage.setItem('selectedDate',value.toISOString());},[value]);
+
   const toggleCalendar = () => {
     setShowCalendar((prevShowCalendar) => !prevShowCalendar);
   };
 
-  const handleDateChange = (date) => {
-    onChange2(date); // 선택된 날짜를 onChange2 프로퍼티로 전달
-    onChange(date); // MyCalendar 컴포넌트의 상태 업데이트
-  };
-
   const formatDateWithWeekday = (date) => {
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    return date.toLocaleString('ko-KR', options);
+    const options = {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+    return date.toLocaleString("ko-KR", options);
   };
 
   const prevLabel = ({ date }) => {
@@ -76,11 +71,15 @@ const MyCalendar = ({onChange2}) => {
     <>
       <Container>
         <ButtonWrapper>
-          <TodayText>{formatDateWithWeekday(value)}</TodayText>
+          <TodayText>{formatDateWithWeekday(date)}</TodayText>
           <ToggleButton onClick={toggleCalendar}>날짜 변경</ToggleButton>
           {showCalendar && (
             <CalendarWrapper>
-              <Calendar onChange={handleDateChange} value={value} prevLabel={prevLabel} />
+              <Calendar
+                onChange={onChange}
+                value={date}
+                prevLabel={prevLabel}
+              />
             </CalendarWrapper>
           )}
         </ButtonWrapper>
@@ -88,5 +87,3 @@ const MyCalendar = ({onChange2}) => {
     </>
   );
 };
-
-export default MyCalendar;
