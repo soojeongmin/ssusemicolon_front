@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Route, Routes } from "react-router";
 import styled from "styled-components";
 
+import { SplashPage } from "./page/Splash";
 import { DashboardPage } from "./page/Dashboard";
 import { DetailPage } from "./page/DetailBoard";
 
@@ -45,6 +46,7 @@ const App = () => {
   return (
     <Wrapper className="App">
       <Routes>
+        <Route path="/splash" element={<SplashPage />}></Route>
         <Route path="/" element={<DashboardPage />}></Route>
         <Route path="/detail/:storeId" element={<DetailPage />}></Route>
       </Routes>
