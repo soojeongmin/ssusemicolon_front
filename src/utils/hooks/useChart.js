@@ -32,14 +32,14 @@ export const chartKeys = {
       "picture",
       { q },
     ],
-    detail: (storeId) => [...chart2Keys.all, "chart2", storeId],
+    detail2: (storeId, date) => [...chart2Keys.all, "chart2", storeId,date],
   };
   
   // Get 홈화면 - 데이터 가져오기
   export const useChart2 = (storeId,date) => {
     console.log("storeId: ", storeId);
     // 이런식으로 키와, api 호출에 전달
-    return useQuery(chart2Keys.detail(storeId), () => //하하. 한개만 있어도 됨?
-      fetchChart2Api(storeId),
+    return useQuery(chart2Keys.detail2(storeId,date), () => //하하. 한개만 있어도 됨?
+      fetchChart2Api(storeId,date),
     );
   };

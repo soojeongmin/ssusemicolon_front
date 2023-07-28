@@ -54,7 +54,7 @@ const ChartToggle = ({data}) => {
     <div>
       <SwitchWrapper>
       
-        {showMyChart ? <MyChart /> : <Rechart data = {data}/>}
+        {showMyChart ? <MyChart data2 = {data} /> : <Rechart data = {data}/>}
         <SwitchButtonLeft onClick={toggleToMyChart}><Icon.Left /></SwitchButtonLeft>
         <SwitchButtonRight onClick={toggleToRechart}><Icon.Right /></SwitchButtonRight>
       </SwitchWrapper>

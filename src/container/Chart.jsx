@@ -1,6 +1,6 @@
 import { ResponsiveLine } from '@nivo/line';
 
-const MyChart = () => {
+const MyChart = (data2) => {
   // 차트 데이터
   const data = [
     {
@@ -111,7 +111,7 @@ const MyChart = () => {
   return (
     <ResponsiveLine
     
-      data={data}
+      data={data2}
       enableSlices="x"
       height={400}
       margin={{

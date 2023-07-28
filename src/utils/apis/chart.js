@@ -13,6 +13,6 @@ export const fetchChart2Api = async (storeId,date) => { //storeID를 매개변�
     if (!storeId && !date) {
       return undefined;
     }
-    const { data } = await customAxios.get(`/density/${storeId}?speificDate=${date}`);
+    const { data } = await customAxios.get(`/density/${storeId}?specificDate=${date}`);
     return data.data;
   };

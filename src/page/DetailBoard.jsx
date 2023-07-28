@@ -79,7 +79,7 @@ export const DetailPage = () => {
     const { storeId } = useParams(); //여기서 아이디를 안전하게 만든다.
     const navigate = useNavigate();
     console.log('storeId: ', storeId);
-    const [selectedDate, setSelectedDate] = useState(new Date("2023-07-25"));
+    const [selectedDate, setSelectedDate] = useState(new Date("2023-07-23"));
 
   const handleDateChange = (date) => {
     setSelectedDate(date); }// 선택된 날짜를 상태로 관리합니다.
@@ -119,42 +119,147 @@ export const DetailPage = () => {
         return <>로딩중...33</>
     }
 
-    // if(error3){
-    //     return <>{error3}</>
-    // }
+    if(error3){
+        return <>{error3}</>
+    }
     console.log(data3)
-     const DayDensity = data2.densityPerDayList;
+     const WeekDensity = data2.densityPerDayList;
     const newdata = [
             {
-              name: "일",
-              밀집도: DayDensity[0],
-            },
-            {
-              name: "월",
-              밀집도: DayDensity[1],
-            },
-            {
-              name: "화",
-              밀집도: DayDensity[2],
-            },
-            {
-              name: "수",
-              밀집도: DayDensity[3],
-            },
-            {
-              name: "목",
-              밀집도: DayDensity[4],
-            },
-            {
               name: "금",
-              밀집도: DayDensity[5],
+              밀집도: WeekDensity[0],
             },
             {
               name: "토",
-              밀집도: DayDensity[6],
+              밀집도: WeekDensity[1],
+            },
+            {
+              name: "일",
+              밀집도: WeekDensity[2],
+            },
+            {
+              name: "월",
+              밀집도: WeekDensity[3],
+            },
+            {
+              name: "화",
+              밀집도: WeekDensity[4],
+            },
+            {
+              name: "수",
+              밀집도: WeekDensity[5],
+            },
+            {
+              name: "목",
+              밀집도: WeekDensity[6],
             },
           ];
     
+          const DayDensity = data3.densityPerHourList;
+          console.log(DayDensity)
+          const newdata2 = [
+            {
+              x: '0시',
+              y: 0.5
+            },
+            {
+              x: '1시',
+              y: 0.6
+            },
+            {
+              x: '2시',
+              y: 0.8
+            },
+            {
+              x: '3시',
+              y: 0.7
+            },
+            {
+              x: '4시',
+              y: 0.8
+            },
+            {
+              x: '5시',
+              y: 0.5
+            },
+            {
+              x: '6시',
+              y: 0.2
+            },
+            {
+              x: '7시',
+              y: 0.3
+            },
+            {
+              x: '8시',
+              y: 0.4
+            },
+            {
+              x: '9시',
+              y: 0.5
+            },
+            {
+              x: '10시',
+              y: 0.5
+            },
+            {
+              x: '11시',
+              y: 0.1
+            },
+            {
+              x: '12시',
+              y: -0.2
+            },
+            {
+              x: '13시',
+              y: -0.6
+            },
+            {
+              x: '14시',
+              y: -0.1
+            },
+            {
+              x: '15시',
+              y: 0
+            },
+            {
+              x: '16시',
+              y: 0.1
+            },
+            {
+              x: '17시',
+              y: -0.1
+            },
+            {
+              x: '18시',
+              y: -0.4
+            },
+            {
+              x: '19시',
+              y: -0.6
+            },
+            {
+              x: '20시',
+              y: -0.5
+            },
+            {
+              x: '21시',
+              y: 0.2
+            },
+            {
+              x: '22시',
+              y: 0.5
+            },
+            {
+              x: '23시',
+              y: 0.6
+            },   
+        ]
+        const NewData = newdata2.map((datapoint,index) => {
+            if(index<data3.openBusinessHour || index>data3.closeBusinessHour)
+                return datapoint;
+            return {...datapoint,y:DayDensity[index]};
+        });
    
       // YYYY-MM-DD 형식으로 날짜를 변환하는 함수
  
@@ -175,7 +280,7 @@ export const DetailPage = () => {
         <Market data={data} />
         <Density storeInfo={data}/>
         <MyCalendar  onChange={handleDateChange}/>
-        <ChartToggle data = {newdata}/>
+        <ChartToggle data = {newdata} data2 = {NewData}/>
         
     </Container>)
 }
