@@ -100,7 +100,7 @@ const HeaderProfile = styled.div`
 
 const Menu = styled.div`
   position: absolute;
-  top: 125px;
+  top: 80px;
   left: ${(props) => (props.isOpen ? '0' : '-200px')};
   width: 31%;
   height: 100vh;

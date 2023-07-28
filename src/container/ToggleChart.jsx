@@ -39,7 +39,7 @@ const GraphTitle = styled.h2`
   font-size:20px;
   font-weight:bold;`
 
-const ChartToggle = () => {
+const ChartToggle = ({data}) => {
   const [showMyChart, setShowMyChart] = useState(true); // 처음에는 MyChart를 보여줍니다.
 
   const toggleToMyChart = () => {
@@ -54,7 +54,7 @@ const ChartToggle = () => {
     <div>
       <SwitchWrapper>
       
-        {showMyChart ? <MyChart /> : <Rechart />}
+        {showMyChart ? <MyChart /> : <Rechart data = {data}/>}
         <SwitchButtonLeft onClick={toggleToMyChart}><Icon.Left /></SwitchButtonLeft>
         <SwitchButtonRight onClick={toggleToRechart}><Icon.Right /></SwitchButtonRight>
       </SwitchWrapper>

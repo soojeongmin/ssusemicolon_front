@@ -4,7 +4,7 @@ const MyChart = () => {
   // 차트 데이터
   const data = [
     {
-      id: '밀집률',
+      id: '밀집도',
       data: [
             {
               x: '0시',
