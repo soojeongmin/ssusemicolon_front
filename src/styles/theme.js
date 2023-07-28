@@ -4,6 +4,7 @@ const colors = {
   mainYellow: "#FFBE16",
   mainGreen: "#17D340",
   mainWhite: "#FFFFFF",
+  mainGray: "#2B2D4280",
 };
 
 const spacing = {
