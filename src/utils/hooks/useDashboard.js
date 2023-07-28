@@ -6,10 +6,16 @@ export const dashboardKeys = {
   all: ["dashboard"],
   list: () => [...dashboardKeys.all, "list"],
   search: (q) => [...dashboardKeys.all, "search", { q }],
+  nearBy: ({ radius, latitude, longitude }) => [
+    ...dashboardKeys.all,
+    "nearBy",
+    { radius, latitude, longitude },
+  ],
 };
 
 // Get 홈화면 - 데이터 가져오기
-export const useNearStores = () => {
-  // key: ["dashboard", "list"]
-  return useQuery(dashboardKeys.list(), () => fetchStoreListApi());
+export const useNearStores = ({ radius, latitude, longitude }) => {
+  return useQuery(dashboardKeys.nearBy({ radius, latitude, longitude }), () =>
+    fetchStoreListApi({ radius, latitude, longitude }),
+  );
 };

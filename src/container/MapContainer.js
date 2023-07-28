@@ -1,6 +1,9 @@
 import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
+import { useAppDispatch, useAppSelector } from "../store/Hooks.js";
+import { mapActions } from "../store/ducks/mapSlice.js";
 import MapButton from "./MapButton.jsx";
 
 const { kakao } = window;
@@ -12,12 +15,16 @@ const { kakao } = window;
  */
 
 const MapContainer = (props) => {
-  const { center, markers: propsMarkers } = props;
-  const [level, setLevel] = useState(3);
-  const [currentPos, setCurrentPos] = useState(false);
-  const [refreshPos, setRefreshPos] = useState(false);
+  const { markers: propsMarkers } = props;
+  const { center, radius, level } = useAppSelector((state) => state.map);
+  const dispatch = useAppDispatch();
+  const mapRef = useRef(null);
+  const navigate = useNavigate();
 
-  useEffect(() => {
+  /**
+   * 가게들의 평균위치 반환
+   */
+  const getMeanCenterOfMarkers = useCallback(() => {
     const meanCenter = propsMarkers.reduce(
       (acc, { latitude, longitude }) => {
         if (propsMarkers.length <= 0) {
@@ -31,41 +38,48 @@ const MapContainer = (props) => {
       { latitude: 0, longitude: 0 },
     );
 
-    const { latitude, longitude } =
-      Object.keys(center).length > 0 ? center : meanCenter;
+    return meanCenter;
+  }, [propsMarkers]);
 
-    const markers = [...propsMarkers, center];
-    let container = document.getElementById("map"),
-      options = {
-        center: new window.kakao.maps.LatLng(latitude, longitude),
-        level: level,
-      };
+  // 업데이트
+  const refreshLocation = useCallback(() => {
+    const latlng = mapRef.current.getCenter();
+    const lat = latlng.getLat();
+    const lng = latlng.getLng();
 
-    let map = new kakao.maps.Map(container, options);
-    map.setMaxLevel(6);
+    const level = mapRef.current.getLevel();
 
-    if (navigator.geolocation || currentPos) {
+    dispatch(mapActions.setCenter({ latitude: lat, longitude: lng }));
+    dispatch(mapActions.setRadiusByLevel(level));
+  }, [dispatch]);
+
+  // 현재 GPS 위치로 이동
+  const updateCurrentGPSPos = useCallback(() => {
+    if (navigator) {
       navigator.geolocation.getCurrentPosition(function (position) {
         const moveLatLon = new kakao.maps.LatLng(
           position.coords.latitude,
           position.coords.longitude,
         );
-        map.setCenter(moveLatLon);
+        mapRef.current.setCenter(moveLatLon);
       });
-    } else {
-      const moveLatLon = new kakao.maps.LatLng(latitude, longitude);
-      map.setCenter(moveLatLon);
+      refreshLocation();
     }
+  }, [refreshLocation]);
 
-    function displayMarker(latlngPosition, storeName, density) {
-      var imageSrc = "https://ifh.cc/g/YB8asG.png";
+  /**
+   * 마커 표시
+   */
+  const displayMarker = useCallback(
+    (latlngPosition, storeName, density, storeId) => {
+      let imageSrc = "https://ifh.cc/g/YB8asG.png";
 
-      if(density>=75) imageSrc = "https://ifh.cc/g/YB8asG.png";
-      else if(density<75 && density >= 50) imageSrc = "https://ifh.cc/g/51onOY.png";
-      else if(density<50 && density >= 25) imageSrc = "https://ifh.cc/g/wtKDAg.png";
-      else if(density<25 && density >= 0) imageSrc = "https://ifh.cc/g/a5KAGn.png";
+      if (density >= 75) imageSrc = "https://ifh.cc/g/YB8asG.png";
+      else if (density >= 50) imageSrc = "https://ifh.cc/g/51onOY.png";
+      else if (density >= 25) imageSrc = "https://ifh.cc/g/wtKDAg.png";
+      else if (density >= 0) imageSrc = "https://ifh.cc/g/a5KAGn.png";
       else imageSrc = "https://ifh.cc/g/rqCy80.png";
-      
+
       const imageSize = new kakao.maps.Size(50, 70);
       const imageOption = { offset: new kakao.maps.Point(27, 69) };
 
@@ -81,66 +95,70 @@ const MapContainer = (props) => {
         image: markerImage,
       });
 
-      marker.setMap(map);
+      marker.setMap(mapRef.current);
 
-      var iwContent = '<div style="padding:5px">'+storeName+'</div>';
-      var infowindow = new kakao.maps.InfoWindow({
-        content : iwContent
+      let iwContent = '<div style="padding:5px">' + storeName + "</div>";
+      let infowindow = new kakao.maps.InfoWindow({
+        content: iwContent,
       });
 
-      kakao.maps.event.addListener(marker, 'mouseover', function() {
-          infowindow.open(map, marker);
+      kakao.maps.event.addListener(marker, "mouseover", function () {
+        infowindow.open(mapRef.current, marker);
       });
-      
-      kakao.maps.event.addListener(marker, 'mouseout', function() {
-          infowindow.close();
-      });
-    }
 
-    for (const { latitude, longitude, storeName, density } of markers) {
+      kakao.maps.event.addListener(marker, "mouseout", function () {
+        infowindow.close();
+      });
+
+      kakao.maps.event.addListener(marker, "click", function () {
+        navigate(`/detail/${storeId}`);
+      });
+    },
+    [mapRef, navigate],
+  );
+
+  /**
+   * 초기화
+   */
+  useEffect(() => {
+    const { latitude, longitude } =
+      Object.keys(center).length > 0 ? center : getMeanCenterOfMarkers();
+
+    let container = document.getElementById("map"),
+      options = {
+        center: new kakao.maps.LatLng(latitude, longitude),
+        level: level,
+      };
+
+    mapRef.current = new kakao.maps.Map(container, options);
+
+    const markers = [...propsMarkers, center];
+    for (const marker of markers) {
+      const { latitude, longitude, storeName, density, storeId } = marker;
       const position = new kakao.maps.LatLng(latitude, longitude);
-      displayMarker(position, storeName, density);
+      displayMarker(position, storeName, density, storeId);
     }
 
     return () => {};
-  }, [center, propsMarkers, level, currentPos, refreshPos]);
+  }, [
+    center,
+    propsMarkers,
+    level,
+    mapRef,
+    displayMarker,
+    getMeanCenterOfMarkers,
+    updateCurrentGPSPos,
+  ]);
 
+  // 줌인
   const zoomIn = () => {
-    if (level > 1) setLevel(level - 1);
+    if (level > 1) dispatch(mapActions.setLevel(level - 1));
   };
 
+  // 줌아웃
   const zoomOut = () => {
-    if (level < 6) setLevel(level + 1);
+    if (level < 6) dispatch(mapActions.setLevel(level + 1));
   };
-
-  const refreshLocation = () => {
-    setRefreshPos(true);
-    // 지도에서 센터를 가져오는거랑
-    // 위치에대한 리스트 뽑아오느것
-    // 위치에 대한 리스트 뽑는것은 응용
-    // 지도에서 센터 가져오는것은 mapcontainer에서 getCenter 이름의 함수를 props로 받거
-  };
-
-  const updateCurrentPos = () => {
-    // setCurrentPos(true);
-
-    // if (currentPos) {
-    //   navigator.geolocation.getCurrentPosition(function (position) {
-    //     const moveLatLon = new kakao.maps.LatLng(
-    //       position.coords.latitude,
-    //       position.coords.longitude,
-    //     );
-    //     map.setCenter(moveLatLon);
-    //   });
-    // } else {
-    //   const moveLatLon = new kakao.maps.LatLng(latitude, longitude);
-    //   map.setCenter(moveLatLon);
-    // }
-  };
-
-  const getCenter = () => {
-    props.getCenter(this.map.center);
-  }
 
   return (
     <StyledMapContainer id="map" {...props}>
@@ -148,7 +166,7 @@ const MapContainer = (props) => {
         zoomIn={zoomIn}
         zoomOut={zoomOut}
         refreshLocation={refreshLocation}
-        setCurrentPos={updateCurrentPos}
+        updateCurrentPos={updateCurrentGPSPos}
       />
     </StyledMapContainer>
   );
@@ -172,7 +190,6 @@ MapContainer.defaultProps = {
   width: "100vw",
   height: "100vh",
   marginTop: "80px",
-  center: {},
   markers: [],
 };
 

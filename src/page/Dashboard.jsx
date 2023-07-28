@@ -1,174 +1,209 @@
 import { styled } from "styled-components";
-import Icon from '../component/Icon';
+import Icon from "../component/Icon";
 import Header from "../container/Header";
 import MapContainer from "../container/MapContainer";
 import { useNearStores } from "../utils/hooks/useDashboard";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../store/Hooks";
 import { useSearchQuery } from "../utils/hooks/useSearch";
+import { useState } from "react";
 
 const Container = styled.div`
-    position: relative;
-`
+  position: relative;
+`;
 
 const StyledIcon = styled.div`
   svg {
     width: 18px;
     height: 18px;
   }
-`
+`;
 
 const Box = styled.div`
-    position: fixed;
-    display: flex;
-    overflow-y: auto;
-    z-index: 20;
+  position: fixed;
+  display: flex;
+  overflow-y: auto;
+  z-index: 20;
 
-    left: 20px;
-    top: 100px;
-    width: 350px;
-    height: 820px;
+  left: 20px;
+  top: 100px;
+  width: 350px;
+  height: 820px;
 
-    background-color: #FFFFFF;
+  background-color: #ffffff;
 
-    border-radius: 20px;
-    border-style: solid;
-    border-width: 2px;
-    border-color: #BBBBBB;
-    
-    box-shadow : 0px 0px 30px 0px rgb(0, 0, 0, 0.25);
+  border-radius: 20px;
+  border-style: solid;
+  border-width: 2px;
+  border-color: #bbbbbb;
 
-    flex-direction: row;
-`
+  box-shadow: 0px 0px 30px 0px rgb(0, 0, 0, 0.25);
+
+  flex-direction: row;
+`;
 
 const TitleSpace = styled.div`
-    height: 50px;
-`
+  height: 50px;
+`;
 
 const LeftWhiteSpace = styled.div`
-    margin: 0 10px;
-    cursor: pointer;
-`
+  margin: 0 10px;
+  cursor: pointer;
+`;
 
 const MarketList = styled.div`
-    height: 250px;
-    margin: 0 0 26px 0;
-`
+  height: 250px;
+  margin: 0 0 26px 0;
+`;
 
 const Title = styled.h1`
-    font-size: 24px;
-    font-weight: bold;
-    margin: 25px 0;
-`
+  font-size: 24px;
+  font-weight: bold;
+  margin: 25px 0;
+`;
 
 const StoreTitle = styled.h2`
-    margin: 10px 0 5px 0;
-    font-size: 20px;
-    font-weight: bold;
-`
+  margin: 10px 0 5px 0;
+  font-size: 20px;
+  font-weight: bold;
+`;
 
 const PopGroup = styled.div`
-    width: 300px;
-    display: flex;
-    flex-direction: row;
-`
+  width: 300px;
+  display: flex;
+  flex-direction: row;
+`;
 
 const PopDen = styled.div`
-    width: 65px;
-`
+  width: 65px;
+`;
 
 const PopDenText = styled.h4`
-    width: 100%;
-    padding: 2px 0 0 0;
-    font-size: 14px;
-`
+  width: 100%;
+  padding: 2px 0 0 0;
+  font-size: 14px;
+`;
 
 const StyledImage = styled.div`
-    width:330px; 
-    height:200px;
-    display: block; 
-    background-image: url(${props => props.thumurl});
-    background-color: #EBEBEB;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;
-`
+  width: 330px;
+  height: 200px;
+  display: block;
+  background-image: url(${(props) => props.thumurl});
+  background-color: #ebebeb;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+`;
 
-const Image = ({thumUrl}) => {
-    return <StyledImage thumurl={thumUrl}/>
-}
+const Image = ({ thumUrl }) => {
+  return <StyledImage thumurl={thumUrl} />;
+};
 
 export const DashboardPage = () => {
-    const {searchKeyword} = useAppSelector((store) => store.search);
-    const {isLoading, data: nearStores, isError} = useNearStores();
-    const {isLoading: isSearchLoading, data: searchResult, isError: isSearchError} = useSearchQuery(searchKeyword);
-    const navigate = useNavigate();
+  const { searchKeyword } = useAppSelector((store) => store.search);
+  const { center, radius } = useAppSelector((state) => state.map);
+  const { latitude, longitude } = center;
 
-    if(isLoading){
-        return '로딩중';
-    }
+  const {
+    isLoading,
+    data: nearStores,
+    isError,
+  } = useNearStores({ radius, latitude, longitude });
 
-    if(isSearchLoading){
-        return '로딩중'
-    }
+  const {
+    isLoading: isSearchLoading,
+    data: searchResult,
+    isError: isSearchError,
+  } = useSearchQuery(searchKeyword);
 
-    const stores = searchKeyword ? searchResult : nearStores;
-    const positions = stores.map(({latitude, longitude, storeName, density}) => ({latitude, longitude, storeName, density}));
+  const navigate = useNavigate();
 
-    const handleOnClickStore = (storeId) => {
-        navigate(`/detail/${storeId}`);
-    }
+  if (isLoading) {
+    return "로딩중";
+  }
 
-    const calculatePop = (density) => {
-        if(density>=75) return '매우 혼잡';
-        else if(density<75 && density >= 50) return '혼잡';
-        else if(density<50 && density >= 25) return '보통';
-        else return '원활';
-    }
+  if (isSearchLoading) {
+    return "로딩중";
+  }
 
-    const StoresComponent = () => {
-        const ret =  stores.map(({storeId, storeName, thumUrl, density}) => {
-            return <LeftWhiteSpace key={storeId} onClick={() => handleOnClickStore(storeId)}>
-            <MarketList>
-                <Image thumUrl={thumUrl}/>
-                <StoreTitle>{storeName}</StoreTitle>
-                <PopGroup>
-                    <PopDen><Icon.Pop/></PopDen>
-                    <PopDenText>{calculatePop(density)}</PopDenText>
-                    <PopDen><Icon.Density/></PopDen>
-                    <PopDenText>밀집도 {density}%</PopDenText>
-                </PopGroup>
-            </MarketList>
+  const stores = searchKeyword ? searchResult : nearStores;
+  const positions = stores.map(
+    ({ latitude, longitude, storeName, density, storeId }) => ({
+      latitude,
+      longitude,
+      storeName,
+      density,
+      storeId,
+    }),
+  );
+
+  const handleOnClickStore = (storeId) => {
+    navigate(`/detail/${storeId}`);
+  };
+
+  const calculatePop = (density) => {
+    if (density >= 75) return "매우 혼잡";
+    else if (density < 75 && density >= 50) return "혼잡";
+    else if (density < 50 && density >= 25) return "보통";
+    else return "원활";
+  };
+
+  const StoresComponent = () => {
+    const ret = stores.map(({ storeId, storeName, thumUrl, density }) => {
+      return (
+        <LeftWhiteSpace
+          key={storeId}
+          onClick={() => handleOnClickStore(storeId)}
+        >
+          <MarketList>
+            <Image thumUrl={thumUrl} />
+            <StoreTitle>{storeName}</StoreTitle>
+            <PopGroup>
+              <PopDen>
+                <Icon.Pop />
+              </PopDen>
+              <PopDenText>{calculatePop(density)}</PopDenText>
+              <PopDen>
+                <Icon.Density />
+              </PopDen>
+              <PopDenText>밀집도 {density}%</PopDenText>
+            </PopGroup>
+          </MarketList>
         </LeftWhiteSpace>
-        })
+      );
+    });
 
-        const NoDataText = () => {
-            return (<LeftWhiteSpace>
-                <MarketList>
-                    <span>
-                    검색결과가 없어요.
-                    </span>
-                </MarketList>
-            </LeftWhiteSpace>)
-        }
+    const NoDataText = () => {
+      return (
+        <LeftWhiteSpace>
+          <MarketList>
+            <span>검색결과가 없어요.</span>
+          </MarketList>
+        </LeftWhiteSpace>
+      );
+    };
 
-        return ret.length > 0 ? ret : <NoDataText/>;
-    }
+    return ret.length > 0 ? ret : <NoDataText />;
+  };
 
-    return <Container>
-        <Header/>
-        <Box>
-            <StyledIcon>
-                <LeftWhiteSpace>
-                    <TitleSpace>
-                        <Title>
-                            {searchKeyword ? `"${searchKeyword}" 검색결과`:"내 근처에 위치한 가게"}
-                        </Title>
-                    </TitleSpace>
-                </LeftWhiteSpace>
-               <StoresComponent/>
-            </StyledIcon>
-        </Box>
-        <MapContainer markers={positions}/>
+  return (
+    <Container>
+      <Header />
+      <Box>
+        <StyledIcon>
+          <LeftWhiteSpace>
+            <TitleSpace>
+              <Title>
+                {searchKeyword
+                  ? `"${searchKeyword}" 검색결과`
+                  : "내 근처에 위치한 가게"}
+              </Title>
+            </TitleSpace>
+          </LeftWhiteSpace>
+          <StoresComponent />
+        </StyledIcon>
+      </Box>
+      <MapContainer markers={positions} />
     </Container>
-}
+  );
+};
