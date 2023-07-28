@@ -1,21 +1,35 @@
-import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
+import React, { useEffect } from "react";
 import { styled } from "styled-components";
-import Icon from "../component/Icon";
-import axios from "axios";
 // import dummyData from './Dummydata';
 import MapButton from "./MapButton.jsx";
 
 const { kakao } = window;
 
 const MapContainer = (props) => {
-  useEffect(() => {
-    var markers = [];
-    var dummypositions = [];
+  const { center, markers: propsMarkers } = props;
 
+  useEffect(() => {
+    const meanCenter = propsMarkers.reduce(
+      (acc, { latitude, longitude }) => {
+        if (propsMarkers.length <= 0) {
+          return acc;
+        }
+
+        acc.latitude += latitude / propsMarkers.length;
+        acc.longitude += longitude / propsMarkers.length;
+        return acc;
+      },
+      { latitude: 0, longitude: 0 },
+    );
+
+    const { latitude, longitude } =
+      Object.keys(center).length > 0 ? center : meanCenter;
+
+    const markers = [...propsMarkers, center];
     let container = document.getElementById("map"),
       options = {
-        center: new window.kakao.maps.LatLng(37.586272, 127.029005),
+        center: new window.kakao.maps.LatLng(latitude, longitude),
         level: 1,
       };
 
@@ -23,31 +37,32 @@ const MapContainer = (props) => {
 
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(function (position) {
-        var moveLatLon = new kakao.maps.LatLng(
+        const moveLatLon = new kakao.maps.LatLng(
           position.coords.latitude,
           position.coords.longitude,
         );
         map.setCenter(moveLatLon);
       });
     } else {
-      var moveLatLon = new kakao.maps.LatLng(37.586272, 127.029005);
+      const moveLatLon = new kakao.maps.LatLng(latitude, longitude);
       map.setCenter(moveLatLon);
     }
 
-    function displayMarker(latlngPosition, pop) {
-      var imageSrc = "../component/Icon", // pop level 별 fill color icon 분류
-        imageSize = new kakao.maps.Size(50, 70),
-        imageOption = { offset: new kakao.maps.Point(27, 69) };
+    function displayMarker(latlngPosition) {
+      // @todo 이미지 바꾸기
+      const imageSrc =
+        "data:image/png;base64,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"; // pop level 별 fill color icon 분류
+      const imageSize = new kakao.maps.Size(50, 70);
+      const imageOption = { offset: new kakao.maps.Point(27, 69) };
 
-      var markerImage = new kakao.maps.MarkerImage(
+      const markerImage = new kakao.maps.MarkerImage(
           imageSrc,
           imageSize,
           imageOption,
         ),
         markerPosition = latlngPosition;
-      // latlngPosition = new kakao.maps.LatLng(37.54699, 127.09598);
 
-      var marker = new kakao.maps.Marker({
+      const marker = new kakao.maps.Marker({
         position: markerPosition,
         image: markerImage,
       });
@@ -55,121 +70,20 @@ const MapContainer = (props) => {
       marker.setMap(map);
     }
 
-    function displayMultipleMarkers() {
-      for (var i = 0; i < dummypositions.length; i++) {
-        displayMarker(dummypositions[i].latlng, dummypositions[i].pop);
-      }
+    // function displayMultipleMarkers() {
+    // }
+    for (const { latitude, longitude } of markers) {
+      console.log("dispay marker: ", latitude, " ", longitude);
+      const position = new kakao.maps.LatLng(latitude, longitude);
+      displayMarker(position);
     }
 
-    function removeMarkers() {
-      for (var i = 0; i < markers.length; i++) {
-        markers[i].setMarkers(null);
-      }
-    }
-
-    /* 카카오맵 키워드 검색
-    function placeSearchFromHeader(keyword){
-      var ps = new kakao.maps.services.Places(); 
-      ps.keywordSearch(keyword, placesSearchCB); 
-
-      function placesSearchCB (data, status, pagination) {
-          if (status === kakao.maps.services.Status.OK) {
-              var bounds = new kakao.maps.LatLngBounds();
-              for (var i=0; i<data.length; i++) {
-                  displayMarkerWithText(data[i]);    
-                  bounds.extend(new kakao.maps.LatLng(data[i].y, data[i].x));
-              }       
-              map.setBounds(bounds);
-          } 
-      }
-
-      function displayMarkerWithText(place) {
-          var marker = new kakao.maps.Marker({
-              map: map,
-              position: new kakao.maps.LatLng(place.y, place.x) 
-          });
-
-          kakao.maps.event.addListener(marker, 'click', function() {
-              infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '</div>');
-              infowindow.open(map, marker);
-          });
-      }
-    }
-
-    */
-
-    /*
-    
-    // var position = new window.kakao.maps.LatLng(37.586272, 127.029005);
-    //  map.setCenter(position);
-    // var  markerPosition = new window.kakao.maps.LatLng(37.586272, 127.029005);
-    // var  marker = new window.kakao.maps.Marker({position: markerPosition});
-    // marker.setMap(map);
-
-    //   function displayMarker<T extends {name: string, location_y: number, location_x: number, active: boolean, point:number}>(data: T, i: number) {
-    //     // 인포윈도우 표시될 위치(좌표)
-    //     let iwPosition  = new window.kakao.maps.LatLng(data.location_y, data.location_x);
-
-    //      // 인포윈도우에 표출될 내용. HTML 문자열이나 document element 등이 가능하다.
-    //     var inactiveInfoWindow = `<div class="inactive infowindow""><span>${data.name}</span></div>`;
-
-    //     //인포윈도우
-    //     let infowindow;
-
-    // infowindow = new window.kakao.maps.InfoWindow({
-    //         zIndex: 1,
-    //         position: iwPosition,
-    //         content: inactiveInfoWindow,
-    //         disableAutoPan: false,
-    //         map: map //map에 해당 인포윈도우를 적용한다.
-    //       });
-
-    //중심좌표 재설정
-    if (navigator.geolocation) {
-      // GeoLocation을 이용해서 접속 위치를 얻어옵니다
-      navigator.geolocation.getCurrentPosition(function (position) {
-        var lat = position.coords.latitude, // 위도
-          lon = position.coords.longitude; // 경도
-
-        var locPosition = new window.kakao.maps.LatLng(lat, lon), // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
-          message = '<div style="padding:5px;">여기에 계신가요?!</div>'; // 인포윈도우에 표시될 내용입니다
-
-        // 마커와 인포윈도우를 표시합니다
-        displayMarker(locPosition, message);
-      });
-    } else {
-      // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
-
-      var locPosition = new window.kakao.maps.LatLng(33.450701, 126.570667),
-        message = "geolocation을 사용할수 없어요..";
-
-      displayMarker(locPosition, message);
-    }
-
-    // 지도에 마커와 인포윈도우를 표시하는 함수입니다
-    function displayMarker(locPosition, message) {
-      // 마커를 생성합니다
-      var marker = new window.kakao.maps.Marker({
-        map: map,
-        position: locPosition,
-      });
-
-      var iwContent = message, // 인포윈도우에 표시할 내용
-        iwRemoveable = true;
-
-      // 인포윈도우를 생성합니다
-      var infowindow = new window.kakao.maps.InfoWindow({
-        content: iwContent,
-        removable: iwRemoveable,
-      });
-
-      // 인포윈도우를 마커위에 표시합니다
-      infowindow.open(map, marker);
-
-      // 지도 중심좌표를 접속위치로 변경합니다
-      map.setCenter(locPosition);
-    }*/
-  }, []);
+    return () => {
+      // for (var i = 0; i < markers.length; i++) {
+      //   markers[i].setMarkers(null);
+      // }
+    };
+  }, [center, propsMarkers]);
 
   return (
     <StyledMapContainer id="map" {...props}>
@@ -190,6 +104,8 @@ MapContainer.propTypes = {
   width: PropTypes.string,
   height: PropTypes.string,
   marginBottom: PropTypes.string,
+  markers: PropTypes.array,
+  center: PropTypes.object,
 };
 
 // 넘겨받을 props의 기본값을 지정할 수 있습니다.
@@ -197,6 +113,8 @@ MapContainer.defaultProps = {
   width: "100vw",
   height: "100vh",
   marginTop: "80px",
+  center: {},
+  markers: [],
 };
 
 export default MapContainer;

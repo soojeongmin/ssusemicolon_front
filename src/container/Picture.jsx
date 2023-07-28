@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import Icon from "../component/Icon"
-import { useDetailboardQuery } from "../utils/hooks/useDetailboard";
+import { useDetailBoard } from "../utils/hooks/useDetailboard";
 import { useParams } from 'react-router-dom';
 
 const ImageContainer = styled.div`
@@ -58,52 +58,27 @@ const CircularImage2 = styled.img`
   object-fit:cover;
 `;
 
-const Image = ({thumUrl}) => {
-  return <CircularImage thumurl={thumUrl}/>
+const Image = ({thumurl}) => {
+  return <CircularImage thumurl={thumurl}/>
 }
-const Picture = () => {
-  const {storeId} = useParams();
-  const [imageURL, setImageURL] = useState('');
-  const {isLoading, data: searchResult, isError} = useDetailboardQuery(storeId);
-
-  if (isLoading || isError || !searchResult) {
-      return null; // 또는 로딩 화면 또는 오류 처리 등을 할 수 있음
-    }
-  const store = searchResult;
-  console.log(store);
-  // if(searchResult){
-  // setImageURL(store.thumurl);} // 렌더링이 무한하게 반복되는 오류 발견. 
-    // useEffect(() => {
-  //   // 서버에서 사진 데이터를 받아온다고 가정
-  //   const imageFromServer = 'your_image_url_from_server.jpg';
-  //   setImageURL(imageFromServer);
-  // }, []);
-  
+const Picture = ({thumurl}) => {
   return (
     <div style={{ position: 'relative' }}>
       {/* 이미지를 원형으로 보여주는 컨테이너 */}
       
       <ImageContainer>
-        <Image thumurl = {searchResult.thumurl}/>
+        <Image thumurl = {thumurl}/>
       </ImageContainer>
     </div>
   );
 };
 
-export const Picture2 = () => {
-    const {isLoading, data: searchResult, isError} = useDetailboardQuery();
-    if(isLoading){
-      console.log("로딩중");
-    } 
-    if (isLoading || isError || !searchResult) {
-      return null; // 또는 로딩 화면 또는 오류 처리 등을 할 수 있음
-    }
-  
+export const Picture2 = ({density}) => {
     return (
       <div style={{ position: 'relative' }}>
         {/* 이미지를 원형으로 보여주는 컨테이너 */}
-        <ImageContainer2 density = {searchResult.density}>
-          <CircularImage2 src = {<Icon.Fire/>}/>
+        <ImageContainer2 density = {density}>
+          <Icon.Fire/>
         </ImageContainer2>
       </div>
     );

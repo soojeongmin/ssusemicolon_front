@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import Icon from "../component/Icon";
-import { useDetailboardQuery } from "../utils/hooks/useDetailboard";
-import { useNavigate, useParams } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
@@ -41,17 +39,7 @@ const Separator = styled.div`
   background-color: #ccc; /* 구분선의 색상을 지정합니다. */
 `;
 
-const Density = () => {
-  const {storeId } = useParams();
-  const {isLoading, data: searchResult, isError} = useDetailboardQuery();
-  const [storeInfo, setStoreInfo] = useState({
-  });
-
-  useEffect(() => {
-    // 서버에서 매장 내 인원 수와 밀집도 데이터를 받아와서 storeInfo에 저장한다고 가정
-    if(searchResult){
-    setStoreInfo(searchResult);}
-  }, []);
+const Density = ({storeInfo}) => {
   // if (isLoading || isError || !searchResult) {
   //   return null; // 또는 로딩 화면 또는 오류 처리 등을 할 수 있음
   // }

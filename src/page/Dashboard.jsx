@@ -108,6 +108,7 @@ export const DashboardPage = () => {
     }
 
     const stores = searchKeyword ? searchResult : allStores; //키워드 있다면 검색 결과 아니면 전부
+    const positions = stores.map(({latitude, longitude}) => ({latitude, longitude}));
 
     const handleOnClickStore = (storeId) => {
         navigate(`/detail/${storeId}`);
@@ -146,7 +147,7 @@ export const DashboardPage = () => {
 
     return <Container>
         <Header/>
-        <MapContainer width={'1920px'} height={'1280px'} marginTop="0"/>
+        <MapContainer markers={positions} width={'1920px'} height={'1280px'} marginTop="0"/>
         
         <Box>
             <StyledIcon>
