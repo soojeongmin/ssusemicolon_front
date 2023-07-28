@@ -2,7 +2,7 @@ import { styled } from "styled-components";
 import Icon from '../component/Icon';
 import Header from "../container/Header";
 import MapContainer from "../container/MapContainer";
-import { useAllStores } from "../utils/hooks/useDashboard";
+import { useNearStores } from "../utils/hooks/useDashboard";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../store/Hooks";
 import { useSearchQuery } from "../utils/hooks/useSearch";
@@ -100,7 +100,7 @@ const Image = ({thumUrl}) => {
 
 export const DashboardPage = () => {
     const {searchKeyword} = useAppSelector((store) => store.search);
-    const {isLoading, data: allStores, isError} = useAllStores();
+    const {isLoading, data: nearStores, isError} = useNearStores();
     const {isLoading: isSearchLoading, data: searchResult, isError: isSearchError} = useSearchQuery(searchKeyword);
     const navigate = useNavigate();
 
@@ -112,8 +112,8 @@ export const DashboardPage = () => {
         return '로딩중'
     }
 
-    const stores = searchKeyword ? searchResult : allStores;
-    const positions = stores.map(({latitude, longitude}) => ({latitude, longitude}));
+    const stores = searchKeyword ? searchResult : nearStores;
+    const positions = stores.map(({latitude, longitude, storeName, density}) => ({latitude, longitude, storeName, density}));
 
     const handleOnClickStore = (storeId) => {
         navigate(`/detail/${storeId}`);

@@ -9,7 +9,7 @@ export const dashboardKeys = {
 };
 
 // Get 홈화면 - 데이터 가져오기
-export const useAllStores = () => {
+export const useNearStores = () => {
   // key: ["dashboard", "list"]
   return useQuery(dashboardKeys.list(), () => fetchStoreListApi());
 };

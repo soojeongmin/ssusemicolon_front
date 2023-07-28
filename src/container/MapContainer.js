@@ -10,10 +10,12 @@ const { kakao } = window;
  * @param {*} props
  * @returns
  */
+
 const MapContainer = (props) => {
   const { center, markers: propsMarkers } = props;
   const [level, setLevel] = useState(3);
   const [currentPos, setCurrentPos] = useState(false);
+  const [refreshPos, setRefreshPos] = useState(false);
 
   useEffect(() => {
     const meanCenter = propsMarkers.reduce(
@@ -40,6 +42,7 @@ const MapContainer = (props) => {
       };
 
     let map = new kakao.maps.Map(container, options);
+    map.setMaxLevel(6);
 
     if (navigator.geolocation || currentPos) {
       navigator.geolocation.getCurrentPosition(function (position) {
@@ -54,13 +57,15 @@ const MapContainer = (props) => {
       map.setCenter(moveLatLon);
     }
 
-    function displayMarker(latlngPosition) {
-      // red : https://ifh.cc/g/YB8asG.png
-      // yellow : https://ifh.cc/g/51onOY.png
-      // green : https://ifh.cc/g/wtKDAg.png
-      // grey : https://ifh.cc/g/rqCy80.png
+    function displayMarker(latlngPosition, storeName, density) {
+      var imageSrc = "https://ifh.cc/g/YB8asG.png";
+
+      if(density>=75) imageSrc = "https://ifh.cc/g/YB8asG.png";
+      else if(density<75 && density >= 50) imageSrc = "https://ifh.cc/g/51onOY.png";
+      else if(density<50 && density >= 25) imageSrc = "https://ifh.cc/g/wtKDAg.png";
+      else if(density<25 && density >= 0) imageSrc = "https://ifh.cc/g/a5KAGn.png";
+      else imageSrc = "https://ifh.cc/g/rqCy80.png";
       
-      const imageSrc = "https://ifh.cc/g/YB8asG.png";
       const imageSize = new kakao.maps.Size(50, 70);
       const imageOption = { offset: new kakao.maps.Point(27, 69) };
 
@@ -77,47 +82,84 @@ const MapContainer = (props) => {
       });
 
       marker.setMap(map);
+
+      var iwContent = '<div style="padding:5px">'+storeName+'</div>';
+      var infowindow = new kakao.maps.InfoWindow({
+        content : iwContent
+      });
+
+      kakao.maps.event.addListener(marker, 'mouseover', function() {
+          infowindow.open(map, marker);
+      });
+      
+      kakao.maps.event.addListener(marker, 'mouseout', function() {
+          infowindow.close();
+      });
     }
 
-    for (const { latitude, longitude } of markers) {
+    for (const { latitude, longitude, storeName, density } of markers) {
       const position = new kakao.maps.LatLng(latitude, longitude);
-      displayMarker(position);
+      displayMarker(position, storeName, density);
     }
 
     return () => {};
-  }, [center, propsMarkers, level, currentPos]);
+  }, [center, propsMarkers, level, currentPos, refreshPos]);
 
   const zoomIn = () => {
     if (level > 1) setLevel(level - 1);
   };
 
   const zoomOut = () => {
-    if (level < 14) setLevel(level + 1);
+    if (level < 6) setLevel(level + 1);
+  };
+
+  const refreshLocation = () => {
+    setRefreshPos(true);
+    // 지도에서 센터를 가져오는거랑
+    // 위치에대한 리스트 뽑아오느것
+    // 위치에 대한 리스트 뽑는것은 응용
+    // 지도에서 센터 가져오는것은 mapcontainer에서 getCenter 이름의 함수를 props로 받거
   };
 
   const updateCurrentPos = () => {
-    setCurrentPos(true);
+    // setCurrentPos(true);
+
+    // if (currentPos) {
+    //   navigator.geolocation.getCurrentPosition(function (position) {
+    //     const moveLatLon = new kakao.maps.LatLng(
+    //       position.coords.latitude,
+    //       position.coords.longitude,
+    //     );
+    //     map.setCenter(moveLatLon);
+    //   });
+    // } else {
+    //   const moveLatLon = new kakao.maps.LatLng(latitude, longitude);
+    //   map.setCenter(moveLatLon);
+    // }
   };
+
+  const getCenter = () => {
+    props.getCenter(this.map.center);
+  }
 
   return (
     <StyledMapContainer id="map" {...props}>
       <MapButton
         zoomIn={zoomIn}
         zoomOut={zoomOut}
+        refreshLocation={refreshLocation}
         setCurrentPos={updateCurrentPos}
       />
     </StyledMapContainer>
   );
 };
 
-// 넘겨받은 props를 아래와 같이 사용할 수 있습니다.
 const StyledMapContainer = styled.div`
   width: ${(props) => props.width};
   height: ${(props) => props.height};
   margin-top: ${(props) => props.marginTop};
 `;
 
-// 넘겨받을 props의 타입을 아래와 같이 지정할 수 있습니다.
 MapContainer.propTypes = {
   width: PropTypes.string,
   height: PropTypes.string,
@@ -126,7 +168,6 @@ MapContainer.propTypes = {
   center: PropTypes.object,
 };
 
-// 넘겨받을 props의 기본값을 지정할 수 있습니다.
 MapContainer.defaultProps = {
   width: "100vw",
   height: "100vh",
