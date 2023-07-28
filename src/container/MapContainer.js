@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import MapButton from "./MapButton.jsx";
 
@@ -12,6 +12,8 @@ const { kakao } = window;
  */
 const MapContainer = (props) => {
   const { center, markers: propsMarkers } = props;
+  const [level, setLevel] = useState(3);
+  const [currentPos, setCurrentPos] = useState(false);
 
   useEffect(() => {
     const meanCenter = propsMarkers.reduce(
@@ -34,12 +36,12 @@ const MapContainer = (props) => {
     let container = document.getElementById("map"),
       options = {
         center: new window.kakao.maps.LatLng(latitude, longitude),
-        level: 1,
+        level: level,
       };
 
     let map = new kakao.maps.Map(container, options);
 
-    if (navigator.geolocation) {
+    if (navigator.geolocation || currentPos) {
       navigator.geolocation.getCurrentPosition(function (position) {
         const moveLatLon = new kakao.maps.LatLng(
           position.coords.latitude,
@@ -77,24 +79,33 @@ const MapContainer = (props) => {
       marker.setMap(map);
     }
 
-    // function displayMultipleMarkers() {
-    // }
     for (const { latitude, longitude } of markers) {
-      console.log("dispay marker: ", latitude, " ", longitude);
       const position = new kakao.maps.LatLng(latitude, longitude);
       displayMarker(position);
     }
 
-    return () => {
-      // for (var i = 0; i < markers.length; i++) {
-      //   markers[i].setMarkers(null);
-      // }
-    };
-  }, [center, propsMarkers]);
+    return () => {};
+  }, [center, propsMarkers, level, currentPos]);
+
+  const zoomIn = () => {
+    if (level > 1) setLevel(level - 1);
+  };
+
+  const zoomOut = () => {
+    if (level < 14) setLevel(level + 1);
+  };
+
+  const updateCurrentPos = () => {
+    setCurrentPos(true);
+  };
 
   return (
     <StyledMapContainer id="map" {...props}>
-      <MapButton />
+      <MapButton
+        zoomIn={zoomIn}
+        zoomOut={zoomOut}
+        setCurrentPos={updateCurrentPos}
+      />
     </StyledMapContainer>
   );
 };
@@ -125,54 +136,3 @@ MapContainer.defaultProps = {
 };
 
 export default MapContainer;
-
-/*
-
-const MapContainer = () => {
-  const [markers, setMarkers] = useState([]);
-  const [searchResult, setSearchResult] = useState([]);
-
-  useEffect(() => {
-
-    // 검색어를 서버에 전달하고 검색 결과를 받아오는 함수
-    const searchPlace = async (query) => {
-      try {
-        const response = await axios.get(`/store/search?query=${query}`);
-        setSearchResult(response.data.data);
-      } catch (error) {
-        console.error('Error fetching search result:', error);
-      }
-    };
-
-    // 지도에 검색 결과를 표시하는 함수
-    const displayMarkers = () => {
-      markers.forEach((marker) => marker.setMap(null));
-
-      searchResult.forEach((store) => {
-        const position = new window.kakao.maps.LatLng(store.latitude, store.longitude);
-        const marker = new window.kakao.maps.Marker({ position });
-        marker.setMap(map);
-        setMarkers((prevMarkers) => [...prevMarkers, marker]);
-      });
-    };
-
-    // 검색어가 변경될 때 마다 검색 함수를 호출하여 결과를 업데이트
-    const handleSearch = (event) => {
-      const query = event.target.value;
-      searchPlace(query);
-    };
-
-    // 검색 결과가 업데이트되면 지도에 표시된 마커들을 삭제하고 새로운 검색 결과로 업데이트
-    displayMarkers();
-
-    return () => {
-      markers.forEach((marker) => marker.setMap(null));
-    };
-  }, [searchResult]);
-
-  return <div id="map" style={{ width: '100vw', height: '36vh', marginTop: '80px' }} />;
-};
-
-export default MapContainer;
-
-*/
