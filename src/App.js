@@ -4,6 +4,9 @@ import styled from "styled-components";
 
 import { DashboardPage } from "./page/Dashboard";
 import { DetailPage } from "./page/DetailBoard";
+import { RegisterPage } from "./page/Admin/RegisterPage";
+import { DeletePage } from "./page/Admin/DeletePage";
+import { EditPage } from "./page/Admin/EditPage";
 
 const Wrapper = styled.div`
   background-color: white;
@@ -47,6 +50,9 @@ const App = () => {
       <Routes>
         <Route path="/" element={<DashboardPage />}></Route>
         <Route path="/detail/:storeId" element={<DetailPage />}></Route>
+        <Route path="/admin/register" element={<RegisterPage />}></Route>
+        <Route path="/admin/edit" element={<EditPage />}></Route>
+        <Route path="/admin/delete" element={<DeletePage />}></Route>
       </Routes>
     </Wrapper>
   );
