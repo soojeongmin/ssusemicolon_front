@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import MyCalendar from "./container/Calendar";
 import React, { PureComponent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { DetailPage } from "./page/DetailBoard";
 import {
     LineChart,
     Line,
@@ -13,64 +14,66 @@ import {
     ResponsiveContainer,
 } from "recharts";
 
+
 const data = [
     {
         name: "월",
         uv: 4000,
-        pv: 2400,
-        amt: 2400,
+        밀집도: 2400,
+ 
     },
     {
         name: "화",
-        uv: 3000,
-        pv: 1398,
-        amt: 2210,
+       
+       밀접도: 1398,
+       
     },
     {
         name: "수",
-        uv: 2000,
-        pv: 9800,
-        amt: 2290,
+      
+        밀집도: 9800,
+      
     },
     {
         name: "목",
-        uv: 2780,
-        pv: 3908,
-        amt: 2000,
+      
+        밀집도: 3908,
+       
     },
     {
         name: "금",
-        uv: 1890,
-        pv: 4800,
-        amt: 2181,
+   
+        밀집도: 4800,
+  
     },
     {
         name: "토",
-        uv: 2390,
-        pv: 3800,
-        amt: 2500,
+   
+        밀집도: 3800,
+      
     },
     {
         name: "일",
-        uv: 3490,
-        pv: 4300,
-        amt: 2100,
+        
+        밀집도: 4300,
+       
     },
 ];
 const date = new Date();
 <MyCalendar value = {date}/>
-const logEvery3Seconds = () => {
-    setInterval(() => {
-      console.log(date);
-    }, 3000); // 3000ms(3초) 간격으로 실행
+const logEvery3Seconds2 = () => {
+    
+    //   console.log(Chartdata);
+    // 3000ms(3초) 간격으로 실행
   };
   
-
+console.log();
 
 export default class Example extends PureComponent {
     static demoUrl = "https://codesandboxt.io/s/simple-line-chart-kec3v";
-    logEvery3Seconds;
+    logEvery3Seconds2;
     render() {
+        const {data} = this.props;
         return (
             
             <ResponsiveContainer width="100%" height="100%">
@@ -92,7 +95,7 @@ export default class Example extends PureComponent {
                     <Legend />
                     <Line
                         type="monotone"
-                        dataKey="pv"
+                        dataKey="밀집도"
                         stroke="#8884d8"
                         activeDot={{ r: 8 }}
                     />

@@ -41,7 +41,7 @@ const Separator = styled.div`
 
 const Density = ({storeInfo}) => {
   // if (isLoading || isError || !searchResult) {
-  //   return null; // 또는 로딩 화면 또는 오류 처리 등을 할 수 있음
+  //   return null; // 또는 로딩 화면 또는 오류 처리 등을 할 수 있음 다만 일괄적으로 detailboard에서 처리했으므로 일일히 컴포넌트 들이 할 이유 없음
   // }
 
   // 남은 여석 계산

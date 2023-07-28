@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchDetailBoardApi } from "../apis/detailboard";
+
 // option(alt) + shift + o
 
 // 대시보드에 쓰이는 key들

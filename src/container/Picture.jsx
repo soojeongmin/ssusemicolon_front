@@ -11,13 +11,14 @@ const ImageContainer = styled.div`
   width: 250px; /* 판보다 약간 작은 크기로 설정 */
   height: 250px; /* 판보다 약간 작은 크기로 설정 */
   border-radius: 50%;
-  overflow: hidden;
-  background-color: transparent; /* 배경색을 흰색으로 설정 */
+ 
+  background-color: #ffffff; /* 배경색을 흰색으로 설정 */
   z-index: 2; /* 겹치는 이미지를 위로 올리기 위해 z-index 설정 */
-  border: 5px solid #ff0000;
+  border: 5px solid #ffffff;
   display:flex;
   align-items:center;
   justify-content:center;
+  overflow : hidden
 `;
 const ImageContainer2 = styled.div`
   position: absolute;
@@ -48,14 +49,16 @@ const ImageContainer2 = styled.div`
 `;
 
 const CircularImage = styled.img`
-  width:440px; 
-  height:220px;
-  display: flex; 
-  background-color: #e0e0e0;
+  width:100%;
+  height:100%;
   background-image: url(${props => props.thumurl});
+  background-repeat: no-repeat; //반복되는 것
+    background-position: center; //위치 설정
+    background-size: cover; //가로 세로에 맞게 크기를 갖는 것
+
 `;
 const CircularImage2 = styled.img`
-  object-fit:cover;
+  
 `;
 
 const Image = ({thumurl}) => {
