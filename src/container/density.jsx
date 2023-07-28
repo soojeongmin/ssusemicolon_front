@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import Icon from "../component/Icon";
-
 
 const Container = styled.div`
   display: flex;
@@ -40,38 +39,28 @@ const Separator = styled.div`
   background-color: #ccc; /* 구분선의 색상을 지정합니다. */
 `;
 
-const Density = () => {
-  const [storeInfo, setStoreInfo] = useState({
-    capacity: 0, // 매장 수용 가능 인원 수
-    currentOccupancy: 0, // 현재 매장 내 인원 수
-  });
-
-  useEffect(() => {
-    // 서버에서 매장 내 인원 수와 밀집도 데이터를 받아와서 storeInfo에 저장한다고 가정
-    const dataFromServer = {
-      capacity: 100, // 매장 수용 가능 인원 수
-      currentOccupancy: 50, // 현재 매장 내 인원 수
-    };
-    setStoreInfo(dataFromServer);
-  }, []);
+const Density = ({storeInfo}) => {
+  // if (isLoading || isError || !searchResult) {
+  //   return null; // 또는 로딩 화면 또는 오류 처리 등을 할 수 있음
+  // }
 
   // 남은 여석 계산
-  const remainingSeats = storeInfo.capacity - storeInfo.currentOccupancy;
-
+  // const remainingSeats = storeInfo.capacity - storeInfo.currentOccupancy;
+  const remainingSeats = Math.round(storeInfo.seatCount - storeInfo.seatCount*(storeInfo.density/100));
   return (
     <Container>
       <Info>
         <IconWrapper>
           <Icon.Pop width="25px" />
         </IconWrapper>
-        매장 내 인원: {storeInfo.currentOccupancy}
+        전체 좌석 수: {storeInfo.seatCount}자리
       </Info>
       <Separator /> {/* 구분선 추가 */}
       <Info>
         <IconWrapper>
           <Icon.Density width="25px" />
         </IconWrapper>
-        밀집도: {((storeInfo.currentOccupancy / storeInfo.capacity) * 100).toFixed(2)}%
+         밀집도: {storeInfo.density}%
       </Info>
       <Separator /> {/* 구분선 추가 */}
       <Info>

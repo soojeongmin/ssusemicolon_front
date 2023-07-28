@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -24,35 +24,39 @@ const Info = styled.p`
   margin-bottom: 5px;
 `;
 
-const Market = () => {
-  const [storeInfo, setStoreInfo] = useState({
-    name: '',
-    category: '',
-    address: '',
-    phone: '',
-  });
-
-  useEffect(() => {
-    // 서버에서 가게 정보를 받아오는 함수를 가정하고, 데이터를 storeInfo에 저장한다고 가정
-    const dataFromServer = {
-      name: '하우스무드 숭실대점',
-      category: '',
-      address: '서울 동작구 삼도로61길 72 B101호',
-      phone: '02-6401-0504',
-    };
-    setStoreInfo(dataFromServer);
-  }, []);
+const Market = ({data}) => {
+  const {storeName, address, businessDays, openBusinessHour, closeBusinessHour} = data;
 
   return (
     <Container>
-      <Title>{storeInfo.name}</Title>
-      <type>{storeInfo.Category}</type>
+      <Title>{storeName}</Title>
+      {/* <type>{Category}</type> */}
       <Subtitle></Subtitle>
-      <Info>{storeInfo.address}</Info>
+      <Info>{address}</Info>
       <Subtitle></Subtitle>
-      <Info>{storeInfo.phone}</Info>
-    </Container>
+      <Info>{WorkDay(businessDays)} 운영</Info>
+      <Subtitle></Subtitle>
+      <Info>영업시간 {openBusinessHour}시~{closeBusinessHour}시</Info>
+        </Container>
   );
 };
+
+function WorkDay(businessDays) {
+  let Week = ['일', '월', '화' , '수' , '목' , '금', '토'];
+  let work = '';
+  if(!businessDays){ return null;}
+  for(let i =0;i<businessDays.length;i++){
+    
+    if(businessDays[i] === 'OPEN' && i !== businessDays.length-1)
+    {   work+=Week[i]+',';}
+    else if(businessDays[i]==='CLOSED')
+    {  continue;}
+    else
+      {work+=Week[i];}
+
+    
+  }
+  return work;
+}
 
 export default Market;
