@@ -64,7 +64,7 @@ export const MyCalendar = ({ onChange, date }) => {
 
   const prevLabel = ({ date }) => {
     const formattedDate = formatDateWithWeekday(date);
-    return formattedDate; // 일요일과 일 글자를 모두 제거
+    return formattedDate || "";
   };
 
   return (

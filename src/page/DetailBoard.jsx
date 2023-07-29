@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { styled } from "styled-components";
 import { MyCalendar } from "../container/Calendar";
@@ -11,18 +11,31 @@ import StoreThumbContainer, {
 import ChartToggle from "../container/ToggleChart";
 import DensityInfoContainer from "../container/density";
 import { useDetailBoard } from "../utils/hooks/useDetailboard";
+import { useAppDispatch } from "../store/Hooks";
+import { mapActions } from "../store/ducks/mapSlice";
 
 const Container = styled.div``;
 
 export const DetailPage = () => {
   const { storeId } = useParams();
   const navigate = useNavigate();
-
+  const dispatch = useAppDispatch();
   const {
     isLoading: isStoreLoading,
     data: storeDetail,
     error,
   } = useDetailBoard(storeId);
+
+  useEffect(() => {
+    if (!storeDetail || !storeDetail?.longitude || !storeDetail?.latitude) {
+      return;
+    }
+
+    const { longitude, latitude } = storeDetail;
+    console.log("lng: ", longitude, " ", latitude);
+
+    dispatch(mapActions.setCenter({ latitude, longitude }));
+  }, [dispatch, storeDetail]);
 
   if (!storeId) {
     navigate("/");
@@ -37,17 +50,11 @@ export const DetailPage = () => {
   }
 
   const { thumUrl, density, longitude, latitude } = storeDetail;
-  const center = { longitude, latitude };
 
   return (
     <Container>
       <Header />
-      <MapContainer
-        center={center}
-        width={"100vw"}
-        height={"65vh"}
-        marginTop="0px"
-      />
+      <MapContainer width={"100vw"} height={"65vh"} marginTop="0px" />
       <StoreThumbContainer thumurl={thumUrl} />
       <DensityStatusImageContainer density={density} />
 

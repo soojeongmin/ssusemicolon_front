@@ -15,11 +15,14 @@ const { kakao } = window;
  */
 
 const MapContainer = (props) => {
-  const { markers: propsMarkers } = props;
-  const { center, radius, level } = useAppSelector((state) => state.map);
+  const { markers: propsMarkers, isSearched } = props;
+  const { searchKeyword } = useAppSelector((store) => store.search);
+  const { center, level } = useAppSelector((state) => state.map);
   const dispatch = useAppDispatch();
   const mapRef = useRef(null);
   const navigate = useNavigate();
+
+  console.log("search keyword: ", searchKeyword);
 
   /**
    * 가게들의 평균위치 반환
@@ -98,6 +101,11 @@ const MapContainer = (props) => {
       marker.setMap(mapRef.current);
 
       let iwContent = '<div style="padding:5px">' + storeName + "</div>";
+
+      if (!storeName) {
+        return;
+      }
+
       let infowindow = new kakao.maps.InfoWindow({
         content: iwContent,
       });
@@ -121,8 +129,13 @@ const MapContainer = (props) => {
    * 초기화
    */
   useEffect(() => {
+    const meanPos = getMeanCenterOfMarkers();
     const { latitude, longitude } =
-      Object.keys(center).length > 0 ? center : getMeanCenterOfMarkers();
+      searchKeyword && isSearched
+        ? meanPos
+        : Object.keys(center).length > 0
+        ? center
+        : getMeanCenterOfMarkers();
 
     let container = document.getElementById("map"),
       options = {
@@ -148,6 +161,8 @@ const MapContainer = (props) => {
     displayMarker,
     getMeanCenterOfMarkers,
     updateCurrentGPSPos,
+    isSearched,
+    searchKeyword,
   ]);
 
   // 줌인
@@ -184,6 +199,7 @@ MapContainer.propTypes = {
   marginBottom: PropTypes.string,
   markers: PropTypes.array,
   center: PropTypes.object,
+  isSearched: PropTypes.bool,
 };
 
 MapContainer.defaultProps = {
@@ -191,6 +207,7 @@ MapContainer.defaultProps = {
   height: "100vh",
   marginTop: "80px",
   markers: [],
+  isSearched: false,
 };
 
 export default MapContainer;

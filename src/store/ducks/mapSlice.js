@@ -2,8 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   center: {
-    latitude: 37.501826,
-    longitude: 126.948473,
+    latitude: 37.49457247983994,
+    longitude: 126.95975997149995,
   },
 
   radius: 2,

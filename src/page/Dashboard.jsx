@@ -1,12 +1,12 @@
+import { useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import Icon from "../component/Icon";
 import Header from "../container/Header";
 import MapContainer from "../container/MapContainer";
-import { useNearStores } from "../utils/hooks/useDashboard";
-import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../store/Hooks";
+import { useNearStores } from "../utils/hooks/useDashboard";
 import { useSearchQuery } from "../utils/hooks/useSearch";
-import { useState } from "react";
 
 const Container = styled.div`
   position: relative;
@@ -103,27 +103,30 @@ export const DashboardPage = () => {
   const { searchKeyword } = useAppSelector((store) => store.search);
   const { center, radius } = useAppSelector((state) => state.map);
   const { latitude, longitude } = center;
+  const isSearched = useRef(false);
 
-  const {
-    isLoading,
-    data: nearStores,
-    isError,
-  } = useNearStores({ radius, latitude, longitude });
+  const { isLoading, data: nearStores } = useNearStores({
+    radius,
+    latitude,
+    longitude,
+  });
 
-  const {
-    isLoading: isSearchLoading,
-    data: searchResult,
-    isError: isSearchError,
-  } = useSearchQuery(searchKeyword);
+  const { isLoading: isSearchLoading, data: searchResult } =
+    useSearchQuery(searchKeyword);
 
   const navigate = useNavigate();
 
   if (isLoading) {
+    isSearched.current = false;
     return "로딩중";
   }
 
   if (isSearchLoading) {
     return "로딩중";
+  }
+
+  if (searchResult) {
+    isSearched.current = true;
   }
 
   const stores = searchKeyword ? searchResult : nearStores;
@@ -138,6 +141,7 @@ export const DashboardPage = () => {
   );
 
   const handleOnClickStore = (storeId) => {
+    console.log("clicked");
     navigate(`/detail/${storeId}`);
   };
 
@@ -203,7 +207,7 @@ export const DashboardPage = () => {
           <StoresComponent />
         </StyledIcon>
       </Box>
-      <MapContainer markers={positions} />
+      <MapContainer markers={positions} isSearched={isSearched.current} />
     </Container>
   );
 };
